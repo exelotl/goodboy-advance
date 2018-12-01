@@ -16,6 +16,9 @@ static const int SPEED_ANGRY = (int)(2.0f * (FIX_SCALE));
 static const int GRAVITY = (int)(0.2f * (FIX_SCALE));
 
 
+// do nothing
+#define SetAnim(a,b);
+
 uint zombies_init(uint tid) {
 	zombie_tid = tid;
 	
@@ -50,7 +53,6 @@ entity_t *zombie_spawn(int x, int y) {
 	}
 	return e;
 }
-
 
 void zombies_update(void) {
 	
@@ -108,7 +110,7 @@ void zombies_update(void) {
 		obj_set_attr(&obj_mem[reserve_obj()],
 			((y - 5) & ATTR0_Y_MASK) | ATTR0_SQUARE,
 			((x - 4) & ATTR1_X_MASK) | (e->flags & (HFLIP|VFLIP)) | ATTR1_SIZE_16,
-			(zombie_tid + e->anim[e->frame]*4) | ATTR2_PRIO(1) | ATTR2_PALBANK(0));
+			(zombie_tid + e->anim->frames[e->frame]*4) | ATTR2_PRIO(1) | ATTR2_PALBANK(0));
 	}
 	
 }

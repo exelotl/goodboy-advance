@@ -1,5 +1,6 @@
 #include "common.h"
 #include "assets/SprShared1.h"
+#include "assets/SprPlayer.h"
 #include "fonts/Acknowledge.h"
 #include "fonts/Volter.h"
 #include "fonts/GelatinMono.h"
@@ -31,11 +32,9 @@ static void show(void) {
 	// REG_BG2CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(29) | BG_CBB(0); // towers
 	// REG_BG3CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(28) | BG_CBB(0); // clouds
 	
-	scrollx = 8;
-	scrolly = 10;
-	
 	// set up sprite palettes
-	dma3_cpy(&pal_obj_bank[0], SprShared1Pal, SprShared1PalLen);
+	dma3_cpy(&pal_obj_bank[0], SprPlayerPal, SprPlayerPalLen);
+	// dma3_cpy(&pal_obj_bank[1], SprShared1Pal, SprShared1PalLen);
 	
 	// text palette
 	pal_obj_bank[8][0] = CLR_SKYBLUE;
@@ -65,13 +64,12 @@ static void hide(void) {
 	
 }
 
+
 static void update(void) {
 	player_update();
 	// zombies_update();
 	// label_update_all();
 	
-	scrollx = (player.x >> FIX_SHIFT) - 240/2;
-	scrolly = (player.y >> FIX_SHIFT) - 160/2;
 	REG_BG0HOFS = scrollx;
 	REG_BG0VOFS = scrolly;
 	REG_BG1HOFS = scrollx;

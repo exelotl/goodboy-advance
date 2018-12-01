@@ -16,7 +16,6 @@ void scene_update();
 
 extern const scene_t title_scene, game_scene;
 
-
 #define CELL_SIZE 16
 #define CELL_SHIFT 4
 #define LEVEL_WIDTH_CELLS 32
@@ -35,6 +34,13 @@ typedef struct level_t {
 	int mapLen;
 	int palLen;
 } level_t;
+
+
+typedef struct anim_t {
+	int *frames;
+	int len, speed;
+	int loop;
+} anim_t;
 
 
 #define ACTIVE 0x0001  // does this entity exist in the world?
@@ -57,8 +63,8 @@ typedef struct entity_t {
 	union {
 		// animated sprite fields
 		struct {
-			int *anim;
-			int anim_len;
+			anim_t *anim;
+			int anim_timer;
 			int frame;
 		};
 		// text label fields
@@ -74,7 +80,8 @@ typedef struct entity_t {
 	union {
 		// player fields
 		struct {
-			int weapon_cooldown;
+			int player_state;  // which ability is missing
+			int player_anim;   // which frame of animation
 		};
 		// enemy fields
 		struct {
@@ -89,7 +96,9 @@ typedef struct entity_t {
 bool entity_move_x(entity_t *e, FIXED velx);
 bool entity_move_y(entity_t *e, FIXED vely);
 void entity_animate(entity_t *e);
-void entity_animate_noloop(entity_t *e);
+
+void set_anim(entity_t *e, anim_t *anim);
+bool anim_finished(entity_t *e);
 
 inline void entity_activate(entity_t *e) {
 	e->flags |= ACTIVE;
@@ -141,13 +150,6 @@ inline bool map_collide_at(entity_t *e, FIXED dx, FIXED dy) {
 		e->w, e->h);
 }
 
-#define SetAnim(e, arr) {                                \
-		(e)->anim = (arr);                               \
-		(e)->anim_len = sizeof(arr)/sizeof(int);         \
-		if ((e)->frame >= (e)->anim_len) (e)->frame = 0; \
-	}
-
-
 // some globals
 
 extern int global_tick;
@@ -171,6 +173,7 @@ void label_update_all(void);
 
 uint player_init(uint tid);
 void player_update(void);
+void player_draw(void);
 
 uint zombies_init(uint tid);
 void zombies_update(void);

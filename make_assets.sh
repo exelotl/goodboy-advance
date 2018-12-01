@@ -22,7 +22,7 @@ SPRITE_8x8="$SPRITE_8x8 -ftc"       # output to C files
 SPRITE_8x8="$SPRITE_8x8 -gt"        # output tiled graphics
 SPRITE_8x8="$SPRITE_8x8 -gB4"       # output 4bpp graphics
 SPRITE_8x8="$SPRITE_8x8 -gu8"       # output data as byte array
-SPRITE_8x8="$SPRITE_8x8 -gT 408000" # transparent colour
+SPRITE_8x8="$SPRITE_8x8 -gT 000000" # transparent colour
 SPRITE_8x8="$SPRITE_8x8 -pe 16"     # up to 16 colours in the palette
 
 SPRITE_16x16="$SPRITE_8x8 -Mw 2 -Mh 2"
@@ -30,7 +30,7 @@ SPRITE_32x32="$SPRITE_8x8 -Mw 4 -Mh 4"
 
 grit $ASSETS/levels/Level1.png $BG_OPTIONS
 
-grit $ASSETS/SprPlayer1.png $SPRITE_16x16 
+grit $ASSETS/player.png $SPRITE_32x32 -oSprPlayer
 
 # a bunch of 16x16 graphics that are able to use a single palette
 # note: first graphic must contain transparent (#408000) pixels
