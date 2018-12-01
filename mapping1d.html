@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fattie Jumbler</title>
+<body>
+<!-- I needed to do some quick image processing and HTML5 canvas was the quickest way -->
+
+<style>
+	img, canvas {
+		overflow: visible;
+		image-rendering: crisp-edges;
+	}
+</style>
+
+<p>Inputs:</p>
+<img src="assets/SprZombie.png" alt="">
+<img src="assets/SprFattie.png" alt="">
+<img src="_misc/SprFattie.png" alt="">
+
+<p>Outputs:</p>
+
+<script>
+
+const tileSize = 8
+
+function transmogrify(img) {
+	let tiles = []
+	let imgWidthTiles = img.width/tileSize
+	let imgHeightTiles = img.height/tileSize
+	
+	// assume image is a single row of frames
+	let mw = imgHeightTiles, mh = imgHeightTiles
+	
+	for (let framex = 0; framex < imgWidthTiles; framex += mw) {
+		for (let y = 0; y < mh; y++) {
+			for (let x = 0; x < mw; x++) {
+				tiles.push({
+					x: (framex + x) * tileSize,
+					y: y * tileSize
+				})
+			}
+		}
+	}
+	
+	
+	let canvas = document.createElement('canvas')
+	// single row
+	canvas.width = tiles.length * tileSize
+	canvas.height = tileSize
+	// canvas.width = img.width
+	// canvas.height = img.height
+	let c = canvas.getContext('2d')
+	let px = 0, py = 0
+	tiles.forEach((tile, i) => {
+		c.drawImage(
+			img,
+			tile.x, tile.y,
+			tileSize, tileSize,
+			px, py,
+			tileSize, tileSize
+		)
+		px += tileSize
+		if (px >= canvas.width) {
+			px = 0
+			py += tileSize
+		}
+	})
+	return canvas
+}
+
+window.onload = function () {
+	document.querySelectorAll('img').forEach(img => {
+		let canvas = transmogrify(img)
+		document.body.appendChild(canvas)
+	})
+}
+
+</script>
+</body>
+</html>

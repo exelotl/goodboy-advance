@@ -1,0 +1,12 @@
+.vscode
+_wip/
+_misc/
+_ripped/
+_sprites/
+build/
+source/assets/
+*.log
+*.sav
+*.gba
+*.lnk
+*.elf
