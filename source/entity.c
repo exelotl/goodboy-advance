@@ -39,7 +39,7 @@ bool entity_move_y(entity_t *e, FIXED dy) {
 // }
 
 void entity_animate(entity_t *e) {
-	anim_t *anim = e->anim;
+	const anim_t *anim = e->anim;
 	if (anim->loop) {
 		if (--e->anim_timer <= 0) {
 			e->anim_timer = anim->speed;
@@ -49,8 +49,8 @@ void entity_animate(entity_t *e) {
 		}
 	} else {
 		if (--e->anim_timer <= 0) {
-			e->anim_timer = 0;
 			if (e->frame < anim->len-1) {
+				e->anim_timer = anim->speed;
 				e->frame++;
 			}
 		}
@@ -58,10 +58,12 @@ void entity_animate(entity_t *e) {
 }
 
 bool anim_finished(entity_t *e) {
-	return (!e->anim->loop) && e->anim_timer <= 0;
+	return (!e->anim->loop)
+	    && (e->frame >= e->anim->len-1)
+		&& (e->anim_timer <= 0);
 }
 
-void set_anim(entity_t *e, anim_t *anim) {
+void set_anim(entity_t *e, const anim_t *anim) {
 	e->anim = anim;
 	if (e->frame >= anim->len) e->frame = 0;
 }

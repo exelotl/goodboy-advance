@@ -6,6 +6,8 @@
 int global_tick;
 int scrollx, scrolly;
 
+int aff_rotate_270;
+
 int main(void) {
 	irq_init(NULL);
 	irq_enable(II_VBLANK);
@@ -27,6 +29,9 @@ int main(void) {
 		bytes2word(1,2,0,0),  // ink,shadow,paper,special color indices
 		&VolterFont           // intitial font structure
 	);
+	
+	aff_rotate_270 = reserve_aff_perm();
+	obj_aff_rotate(&obj_aff_mem[aff_rotate_270], ANGLE(270));
 	
 	// scene_set(title_scene);
 	scene_set(game_scene);

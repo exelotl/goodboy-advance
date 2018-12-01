@@ -74,7 +74,7 @@ static void player_set_anim(int anim_index) {
 
 static const int SPEED = (int)(2.0f * (FIX_SCALE));
 static const int GRAVITY = (int)(0.2f * (FIX_SCALE));
-static const int JUMP_SPEED = (int)(3.8f * (FIX_SCALE));
+static const int JUMP_SPEED = (int)(4.25f * (FIX_SCALE));
 
 entity_t player;
 
@@ -86,7 +86,8 @@ uint player_init(uint tid) {
 		.y = 20 << FIX_SHIFT,
 		.w = 20,
 		.h = 27, 
-		.player_state = STATE_NOJET,
+		.player_state = STATE_ALL,
+		// .player_state = STATE_NOJET,
 		.player_anim = IDLE,
 	};
 	player_set_anim(IDLE);
@@ -119,11 +120,32 @@ void player_update(void) {
 		player.velx = 0;
 	}
 	
-	if (key_is_down(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
-		player.vely = -JUMP_SPEED;
+	int center_x = player.x + (player.w/2)*FIX_SCALE;
+	int center_y = player.y + (player.h/2)*FIX_SCALE;
+	
+	if (player.player_state != STATE_NOGUN) {
+		if (key_hit(KEY_SHOOT)) {
+			if (player.flags & HFLIP) {
+				muzzle_spawn(center_x + -30*FIX_SCALE, center_y + 4*FIX_SCALE, 0, HFLIP);
+			} else {
+				muzzle_spawn(center_x + 30*FIX_SCALE, center_y + 4*FIX_SCALE, 0, 0);
+			}
+		}
 	}
-	if (key_released(KEY_JUMP) && player.vely < 0) {
-		player.vely /= 2;
+	
+	if (player.player_state != STATE_NOJET) {
+		if (key_is_down(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
+			player.vely = -JUMP_SPEED;
+			
+			if (player.flags & HFLIP) {
+				muzzle_spawn(center_x + 8*FIX_SCALE, center_y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+			} else {
+				muzzle_spawn(center_x + -8*FIX_SCALE, center_y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+			}
+		}
+		if (key_released(KEY_JUMP) && player.vely < 0) {
+			player.vely /= 2;
+		}
 	}
 	
 	

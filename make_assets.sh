@@ -30,7 +30,8 @@ SPRITE_32x32="$SPRITE_8x8 -Mw 4 -Mh 4"
 
 grit $ASSETS/levels/Level1.png $BG_OPTIONS
 
-grit $ASSETS/player.png $SPRITE_32x32 -oSprPlayer
+grit $ASSETS/SprPlayer.png $SPRITE_32x32
+grit $ASSETS/SprMuzzle.png $SPRITE_32x32
 
 # a bunch of 16x16 graphics that are able to use a single palette
 # note: first graphic must contain transparent (#408000) pixels

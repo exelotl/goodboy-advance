@@ -27,9 +27,9 @@ extern const scene_t title_scene, game_scene;
 
 typedef struct level_t {
 	int cells[LEVEL_CELL_COUNT];
-	unsigned char *tiles;
-	unsigned short *map;
-	unsigned short *pal;
+	const unsigned char *tiles;
+	const unsigned short *map;
+	const unsigned short *pal;
 	int tilesLen;
 	int mapLen;
 	int palLen;
@@ -63,7 +63,7 @@ typedef struct entity_t {
 	union {
 		// animated sprite fields
 		struct {
-			anim_t *anim;
+			const anim_t *anim;
 			int anim_timer;
 			int frame;
 		};
@@ -83,6 +83,10 @@ typedef struct entity_t {
 			int player_state;  // which ability is missing
 			int player_anim;   // which frame of animation
 		};
+		struct {
+			int muzzle_aff;	
+			int muzzle_attr1;
+		};
 		// enemy fields
 		struct {
 			int health;
@@ -97,7 +101,7 @@ bool entity_move_x(entity_t *e, FIXED velx);
 bool entity_move_y(entity_t *e, FIXED vely);
 void entity_animate(entity_t *e);
 
-void set_anim(entity_t *e, anim_t *anim);
+void set_anim(entity_t *e, const anim_t *anim);
 bool anim_finished(entity_t *e);
 
 inline void entity_activate(entity_t *e) {
@@ -158,6 +162,7 @@ extern int scrollx, scrolly;  // camera
 // sizes of various entity arrays
 
 #define ZOMBIE_COUNT 20
+#define MUZZLE_COUNT 4
 
 // entity declarations
 
@@ -178,8 +183,11 @@ void player_draw(void);
 uint zombies_init(uint tid);
 void zombies_update(void);
 
+uint muzzles_init(uint tid);
+void muzzles_update(void);
 
 entity_t *zombie_spawn(int x, int y);
+entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
 
 
 // OAM management
@@ -189,6 +197,10 @@ int reserve_obj_multi(int n);
 int reserve_aff(void);
 int reserve_aff_perm(void);
 void oam_update(void);
+
+
+// reserved affine indices
+extern int aff_rotate_270;
 
 
 // debugging utilities
