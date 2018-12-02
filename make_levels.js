@@ -37,12 +37,18 @@ function makeLevel(levelJsonPath) {
 	let cells = [];
 	
 	json.layers.forEach(layer => {
-		if (layer.type === 'tilelayer') {
+		if (layer.type === 'tilelayer' && layer.name === 'BG2') {
 			layer.data.forEach(tile => {
 				let tinfo = tileInfos[tile-1];
 				switch (tinfo && tinfo.type) {
 					case 'wall':
-						cells.push(1);
+						cells.push(0x0001);
+						break;
+					case 'oneway':
+						cells.push(0x0002);
+						break;
+					case 'spike':
+						cells.push(0x0004);
 						break;
 					default:
 						cells.push(0);

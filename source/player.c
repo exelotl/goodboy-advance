@@ -101,17 +101,23 @@ void player_update(void) {
 	
 	player.velx = 0;
 	
-	bool on_floor = map_collide_at(&player, 0, FIX_ONE + player.vely);
+	int collide_down = map_collide_at(&player, 0, FIX_ONE + player.vely);
+	int collide_left = map_collide_at(&player, -SPEED, 0);
+	int collide_right = map_collide_at(&player, SPEED, 0);
+	
+	// bool on_oneway = player.vely > 0 && (collision_down & CELL_ONEWAY);
+	// bool on_floor = (collide_down & CELL_SOLID);
+	bool on_floor = did_hit_y(&player, FIX_ONE + player.vely);
 	
 	if (!on_floor) {
 		player.vely += GRAVITY;
 	}
 	
-	if (key_is_down(KEY_LEFT) && !map_collide_at(&player, -SPEED, 0)) {
+	if (key_is_down(KEY_LEFT) && !(collide_left & (CELL_SPIKE | CELL_SOLID))) {
 		player.velx = -SPEED;
 		set_hflip(&player, true);
 	}
-	if (key_is_down(KEY_RIGHT) && !map_collide_at(&player, SPEED, 0)) {
+	if (key_is_down(KEY_RIGHT) && !(collide_right & (CELL_SPIKE | CELL_SOLID))) {
 		player.velx = SPEED;
 		set_hflip(&player, false);
 	}
@@ -134,7 +140,7 @@ void player_update(void) {
 	}
 	
 	if (player.player_state != STATE_NOJET) {
-		if (key_is_down(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
+		if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
 			player.vely = -JUMP_SPEED;
 			
 			if (player.flags & HFLIP) {

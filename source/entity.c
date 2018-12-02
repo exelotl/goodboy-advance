@@ -1,12 +1,20 @@
 #include <tonc.h>
 #include "common.h"
 
+bool did_hit_x(entity_t *e, FIXED dx) {
+	int flags = map_collide_at(e, dx, 0);
+	if (flags & (CELL_SOLID | CELL_SPIKE)) {
+		return true;
+	}
+	return false;
+}
+
 // move by dx
-// if we hit a wall, we move 1px at a time until we hit the wall
+// if we hit a wall, we move 1px at a time until we are no longer hitting
 bool entity_move_x(entity_t *e, FIXED dx) {
-	if (map_collide_at(e, dx, 0)) {
+	if (did_hit_x(e, dx)) {
 		int sign = SGN(dx) << FIX_SHIFT;
-		while ((dx >> FIX_SHIFT) != 0 && !map_collide_at(e, sign, 0)) {
+		while ((dx >> FIX_SHIFT) != 0 && !did_hit_x(e, sign)) {
 			e->x += sign;			
 			dx -= sign;
 		}
@@ -17,10 +25,24 @@ bool entity_move_x(entity_t *e, FIXED dx) {
 	}
 }
 
+bool did_hit_y(entity_t *e, FIXED dy) {
+	int flags = map_collide_at(e, 0, dy);
+	if (flags & (CELL_SOLID | CELL_SPIKE)) {
+		return true;
+	}
+	if (flags & CELL_ONEWAY) {
+		if (e->vely >= 0 && !(map_collide_at(e, 0, 0) & CELL_ONEWAY)) {
+		// if (dy 0 && !(map_collide_at(e, 0, 0) & CELL_ONEWAY)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool entity_move_y(entity_t *e, FIXED dy) {
-	if (map_collide_at(e, 0, dy)) {
+	if (did_hit_y(e, dy)) {
 		int sign = SGN(dy) << FIX_SHIFT;
-		while ((dy >> FIX_SHIFT) != 0 && !map_collide_at(e, 0, sign)) {
+		while ((dy >> FIX_SHIFT) != 0 && !did_hit_y(e, sign)) {
 			e->y += sign;
 			dy -= sign;
 		}

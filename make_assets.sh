@@ -37,6 +37,8 @@ BGAFF_OPTIONS="$BGAFF_OPTIONS -m"         # produce map data
 BGAFF_OPTIONS="$BGAFF_OPTIONS -mRa"       # entries for affine tiles
 BGAFF_OPTIONS="$BGAFF_OPTIONS -mLa"       # affine map layout
 
+# BGLEVEL_OPTIONS="$BG4_OPTIONS -Mw 32 -Mh 32"
+
 SPRITE_8x8=""
 SPRITE_8x8="$SPRITE_8x8 -ftc"       # output to C files
 SPRITE_8x8="$SPRITE_8x8 -gt"        # output tiled graphics
@@ -49,7 +51,7 @@ SPRITE_16x16="$SPRITE_8x8 -Mw 2 -Mh 2"
 SPRITE_32x32="$SPRITE_8x8 -Mw 4 -Mh 4"
 
 grit $ASSETS/BgTalkie.png $BG4_OPTIONS
-grit $ASSETS/levels/Level1.png $BGAFF_OPTIONS
+grit $ASSETS/levels/Level1.png $BG_OPTIONS
 
 grit $ASSETS/SprPlayer.png $SPRITE_32x32
 grit $ASSETS/SprMuzzle.png $SPRITE_32x32

@@ -26,9 +26,16 @@ def const scene_t title_scene, game_scene;
 #define LEVEL_WIDTH_CELLS 64
 #define LEVEL_HEIGHT_CELLS 64
 #define LEVEL_CELL_COUNT (LEVEL_WIDTH_CELLS*LEVEL_HEIGHT_CELLS)
+#define LEVEL_WIDTH_CHUNKS 4
+#define LEVEL_HEIGHT_CHUNKS 4
 
-#define CELL_EMPTY 0
-#define CELL_SOLID 1
+#define CHUNK_WIDTH_PIXELS (8 * 32)
+#define CHUNK_HEIGHT_PIXELS (8 * 32)
+
+#define CELL_EMPTY  0x0000
+#define CELL_SOLID  0x0001
+#define CELL_ONEWAY 0x0002
+#define CELL_SPIKE  0x0004
 
 typedef struct level_t {
 	int cells[LEVEL_CELL_COUNT];
@@ -111,6 +118,11 @@ bool entity_move_x(entity_t *e, FIXED velx);
 bool entity_move_y(entity_t *e, FIXED vely);
 void entity_animate(entity_t *e);
 
+// these check whether an entity would be hitting a solid if it were to move by a certain amount
+// (vely is used to decide if this includes oneway platforms)
+bool did_hit_x(entity_t *e, FIXED dx);
+bool did_hit_y(entity_t *e, FIXED dy);
+
 void set_anim(entity_t *e, const anim_t *anim);
 bool anim_finished(entity_t *e);
 
@@ -159,15 +171,15 @@ inline bool entity_collide(entity_t *a, entity_t *b) {
 		b->w, b->h);
 }
 
-bool map_collide_rect(int x, int y, int w, int h);
+int map_collide_rect(int x, int y, int w, int h);
 
-inline bool map_collide(entity_t *e) {
+inline int map_collide(entity_t *e) {
 	return map_collide_rect(
 		e->x >> FIX_SHIFT,
 		e->y >> FIX_SHIFT,
 		e->w, e->h);
 }
-inline bool map_collide_at(entity_t *e, FIXED dx, FIXED dy) {
+inline int map_collide_at(entity_t *e, FIXED dx, FIXED dy) {
 	return map_collide_rect(
 		(e->x + dx) >> FIX_SHIFT,
 		(e->y + dy) >> FIX_SHIFT,
