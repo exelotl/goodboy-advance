@@ -35,6 +35,7 @@ function makeLevel(levelJsonPath) {
 	
 	let levelName = path.basename(levelJsonPath, '.json');
 	let cells = [];
+	let spawns = [];
 	
 	json.layers.forEach(layer => {
 		if (layer.type === 'tilelayer' && layer.name === 'BG2') {
@@ -54,12 +55,47 @@ function makeLevel(levelJsonPath) {
 						cells.push(0);
 				}
 			});
+		} else if (layer.type === 'objectgroup') {
+			layer.objects.forEach(obj => {
+				let tinfo = tileInfos[obj.gid-1];
+				let type;
+				let x = obj.x;
+				let y = obj.y;
+				switch (tinfo ? tinfo.type : -1) {
+					case 'startpos':
+						type = 0;
+						break;
+					case 'breakable':
+						type = 1;
+						break;
+					case 'altarjetpack':
+						type = 2;
+						break;
+					case 'altarshield':
+						type = 4;
+						break;
+					case 'altargun':
+						type = 5;
+						break;
+					case 'gem':
+						type = 6;
+						break;
+					case 'rocket':
+						type = 7;
+						break;
+					default:
+						console.warn('unrecognised type');
+						return;
+				}
+				spawns.push(`{ .type = ${type}, .x = ${x}, .y = ${y} },\n`);
+			});
 		}
 	})
 	
 	outHeader.push(`#include "assets/${levelName}.h"`);
 	outHeader.push(`extern const level_t ${levelName};`);
 	
+	outSource.push(`const spawninfo_t ${levelName}Spawns[] = {\n${spawns.join('')}};\n`);
 	outSource.push(
 `const level_t ${levelName} = {
 	.cells = {${cells.join(',')}},
@@ -69,6 +105,8 @@ function makeLevel(levelJsonPath) {
 	.mapLen = ${levelName}MapLen,
 	.pal = ${levelName}Pal,
 	.palLen = ${levelName}PalLen,
+	.spawns = ${levelName}Spawns,
+	.spawnsLen = ${spawns.length},
 };`
 	);
 }

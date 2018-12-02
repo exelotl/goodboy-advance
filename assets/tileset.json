@@ -34,14 +34,6 @@
          "type":"wall"
         }, 
         {
-         "id":6,
-         "type":"wall"
-        }, 
-        {
-         "id":7,
-         "type":"wall"
-        }, 
-        {
          "id":10,
          "type":"wall"
         }, 
@@ -67,26 +59,6 @@
         }, 
         {
          "id":18,
-         "type":"wall"
-        }, 
-        {
-         "id":19,
-         "type":"wall"
-        }, 
-        {
-         "id":20,
-         "type":"wall"
-        }, 
-        {
-         "id":21,
-         "type":"wall"
-        }, 
-        {
-         "id":22,
-         "type":"wall"
-        }, 
-        {
-         "id":23,
          "type":"wall"
         }, 
         {
@@ -235,14 +207,6 @@
         }, 
         {
          "id":94,
-         "type":"wall"
-        }, 
-        {
-         "id":100,
-         "type":"wall"
-        }, 
-        {
-         "id":101,
          "type":"wall"
         }, 
         {
@@ -740,6 +704,34 @@
         {
          "id":283,
          "type":"wall"
+        }, 
+        {
+         "id":285,
+         "type":"startpos"
+        }, 
+        {
+         "id":286,
+         "type":"breakable"
+        }, 
+        {
+         "id":287,
+         "type":"altarjetpack"
+        }, 
+        {
+         "id":288,
+         "type":"altarshield"
+        }, 
+        {
+         "id":289,
+         "type":"altargun"
+        }, 
+        {
+         "id":290,
+         "type":"gem"
+        }, 
+        {
+         "id":291,
+         "type":"rocket"
         }, 
         {
          "id":293,

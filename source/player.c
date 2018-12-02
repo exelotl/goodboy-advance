@@ -109,7 +109,9 @@ void player_update(void) {
 	// bool on_floor = (collide_down & CELL_SOLID);
 	bool on_floor = did_hit_y(&player, FIX_ONE + player.vely);
 	
-	if (!on_floor) {
+	if (on_floor) {
+		player.flags |= CAN_JET;
+	} else {
 		player.vely += GRAVITY;
 	}
 	
@@ -140,9 +142,10 @@ void player_update(void) {
 	}
 	
 	if (player.player_state != STATE_NOJET) {
-		if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
+		// if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
+		if (key_hit(KEY_JUMP) && (player.flags & CAN_JET)) {
 			player.vely = -JUMP_SPEED;
-			
+			player.flags &= ~CAN_JET;
 			if (player.flags & HFLIP) {
 				muzzle_spawn(center.x + 8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
 			} else {
@@ -193,6 +196,17 @@ void player_update(void) {
 		if (map_collide(&player)) {
 			player.y -= FIX_ONE;
 		}
+	}
+	
+	if (player.x > Fix(LEVEL_WIDTH_PX)) {
+		player.x -= Fix(LEVEL_WIDTH_PX);
+	} else if (player.x < 0) {
+		player.x += Fix(LEVEL_WIDTH_PX);
+	}
+	if (player.y > Fix(LEVEL_HEIGHT_PX)) {
+		player.y -= Fix(LEVEL_HEIGHT_PX);
+	} else if (player.y < 0) {
+		player.y += Fix(LEVEL_HEIGHT_PX);
 	}
 	
 	int px = player.x >> FIX_SHIFT;

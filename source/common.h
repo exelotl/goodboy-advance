@@ -28,6 +28,8 @@ def const scene_t title_scene, game_scene;
 #define LEVEL_CELL_COUNT (LEVEL_WIDTH_CELLS*LEVEL_HEIGHT_CELLS)
 #define LEVEL_WIDTH_CHUNKS 4
 #define LEVEL_HEIGHT_CHUNKS 4
+#define LEVEL_WIDTH_PX (LEVEL_WIDTH_CELLS*CELL_SIZE)
+#define LEVEL_HEIGHT_PX (LEVEL_HEIGHT_CELLS*CELL_SIZE)
 
 #define CHUNK_WIDTH_PIXELS (8 * 32)
 #define CHUNK_HEIGHT_PIXELS (8 * 32)
@@ -37,6 +39,10 @@ def const scene_t title_scene, game_scene;
 #define CELL_ONEWAY 0x0002
 #define CELL_SPIKE  0x0004
 
+typedef struct spawninfo_t {
+	int type, x, y;
+} spawninfo_t;
+
 typedef struct level_t {
 	int cells[LEVEL_CELL_COUNT];
 	const unsigned char *tiles;
@@ -45,8 +51,9 @@ typedef struct level_t {
 	int tilesLen;
 	int mapLen;
 	int palLen;
+	const spawninfo_t *spawns;
+	int spawnsLen;
 } level_t;
-
 
 typedef struct anim_t {
 	int *frames;
@@ -54,13 +61,13 @@ typedef struct anim_t {
 	int loop;
 } anim_t;
 
-
 typedef struct vec2 {
 	FIXED x, y;
 } vec2;
 
 
 #define ACTIVE 0x0001  // does this entity exist in the world?
+#define CAN_JET 0x0002
 #define HFLIP 0x1000   // same as ATTR1_HFLIP
 #define VFLIP 0x2000   // same as ATTR1_VFLIP
 
@@ -104,7 +111,10 @@ typedef struct entity_t {
 			int muzzle_aff;	
 			int muzzle_attr1;
 		};
-		// enemy fields
+		struct {
+			int brk_timer;
+		};
+		// unused
 		struct {
 			int health;
 			bool angry;
@@ -193,9 +203,10 @@ def int scrollx, scrolly;  // camera
 
 // sizes of various entity arrays
 
-#define ZOMBIE_COUNT 20
+#define ZOMBIE_COUNT 1
 #define MUZZLE_COUNT 4
 #define BULLET_COUNT 8
+#define BREAKABLE_COUNT 20
 
 // entity declarations
 
@@ -205,6 +216,7 @@ def entity_t label_dialog;
 def entity_t bullets[BULLET_COUNT];
 def entity_t muzzles[MUZZLE_COUNT];
 def entity_t zombies[ZOMBIE_COUNT];
+def entity_t breakables[BREAKABLE_COUNT];
 
 def int dialog_has_input;
 def int dialog_visible;
@@ -239,12 +251,18 @@ void bullets_update(void);
 uint shield_init(uint tid);
 void shield_update(void);
 
+uint breakables_init(uint tid);
+void breakables_update(void);
+
 entity_t *zombie_spawn(int x, int y);
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
 entity_t *muzzle_spawn_impact(int x, int y, int dir);
 entity_t *shield_spawn(int x, int y);
 entity_t *bullet_spawn(int x, int y, int dir);
+entity_t *breakable_spawn(int x, int y);
 
+void spawn_all(const level_t *level);
+void map_set_cell(int x, int y, int val); 
 
 // OAM management
 
