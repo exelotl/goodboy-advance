@@ -3,6 +3,7 @@
 #include "assets/SprPlayer.h"
 #include "assets/SprMuzzle.h"
 #include "assets/SprShield.h"
+#include "assets/SprBullet.h"
 #include "fonts/Acknowledge.h"
 #include "fonts/Volter.h"
 #include "fonts/GelatinMono.h"
@@ -38,6 +39,7 @@ static void show(void) {
 	dma3_cpy(&pal_obj_bank[0], SprPlayerPal, SprPlayerPalLen);
 	dma3_cpy(&pal_obj_bank[1], SprMuzzlePal, SprMuzzlePalLen);
 	dma3_cpy(&pal_obj_bank[2], SprShieldPal, SprShieldPalLen);
+	dma3_cpy(&pal_obj_bank[3], SprBulletPal, SprBulletPalLen);
 	// dma3_cpy(&pal_obj_bank[1], SprShared1Pal, SprShared1PalLen);
 	
 	// text palette
@@ -53,6 +55,7 @@ static void show(void) {
 	tid = zombies_init(tid);
 	tid = muzzles_init(tid);
 	tid = shield_init(tid);
+	tid = bullets_init(tid);
 	
 	// zombie_spawn(90<<FIX_SHIFT, 40<<FIX_SHIFT);
 	// zombie_spawn(40<<FIX_SHIFT, 80<<FIX_SHIFT);
@@ -74,8 +77,9 @@ static void hide(void) {
 static void update(void) {
 	player_update();
 	// zombies_update();
+	bullets_update();
 	muzzles_update();
-	shield_update();
+	// shield_update();  // player is responsible for updating shield
 	// label_update_all();
 	
 	REG_BG0HOFS = scrollx;

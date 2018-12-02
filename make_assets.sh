@@ -33,6 +33,7 @@ grit $ASSETS/levels/Level1.png $BG_OPTIONS
 grit $ASSETS/SprPlayer.png $SPRITE_32x32
 grit $ASSETS/SprMuzzle.png $SPRITE_32x32
 grit $ASSETS/SprShield.png $SPRITE_32x32
+grit $ASSETS/SprBullet.png $SPRITE_8x8
 
 # a bunch of 16x16 graphics that are able to use a single palette
 # note: first graphic must contain transparent (#408000) pixels

@@ -2,17 +2,19 @@
 #include "assets/SprMuzzle.h"
 
 static const anim_t AnimMuzzle = { .speed = 2, .loop = 0, .len = 8, .frames = (int[]){0,1,2,3,4,5,6,7} };
+static const anim_t AnimImpact = { .speed = 2, .loop = 0, .len = 6, .frames = (int[]){8,9,10,11,12,13} };
 
 entity_t muzzles[MUZZLE_COUNT];
 static uint muzzle_tid;
 
 uint muzzles_init(uint tid) {
+	muzzle_tid = tid;
 	dma3_cpy(&tile_mem_obj[0][muzzle_tid], SprMuzzleTiles, SprMuzzleTilesLen);
 	
 	for (int i=0; i<MUZZLE_COUNT; i++)
 		muzzles[i] = (entity_t){};
 		
-	return tid + 8 * 16;  // 8 frames
+	return tid + 14 * 16;  // 14 frames
 }
 
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1) {
@@ -34,6 +36,15 @@ entity_t *muzzle_spawn(int x, int y, int aff, int attr1) {
 		set_anim(e, &AnimMuzzle);
 	}
 	return e;
+}
+
+entity_t *muzzle_spawn_impact(int x, int y, int dir) {
+	entity_t *fx = muzzle_spawn(0,0,0, dir > 0 ? 0 : HFLIP);
+	if (fx) {
+		set_center(fx, (vec_t){x,y});
+		set_anim(fx, &AnimImpact);
+	}
+	return fx;
 }
 
 void muzzles_update(void) {

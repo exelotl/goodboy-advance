@@ -177,6 +177,7 @@ extern int scrollx, scrolly;  // camera
 
 #define ZOMBIE_COUNT 20
 #define MUZZLE_COUNT 4
+#define BULLET_COUNT 8
 
 // entity declarations
 
@@ -200,13 +201,17 @@ void zombies_update(void);
 uint muzzles_init(uint tid);
 void muzzles_update(void);
 
+uint bullets_init(uint tid);
+void bullets_update(void);
+
 uint shield_init(uint tid);
 void shield_update(void);
 
 entity_t *zombie_spawn(int x, int y);
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
+entity_t *muzzle_spawn_impact(int x, int y, int dir);
 entity_t *shield_spawn(int x, int y);
-
+entity_t *bullet_spawn(int x, int y, int dir);
 
 
 // OAM management

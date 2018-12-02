@@ -86,8 +86,9 @@ uint player_init(uint tid) {
 		.y = 20 << FIX_SHIFT,
 		.w = 20,
 		.h = 27, 
-		.player_state = STATE_ALL,
+		// .player_state = STATE_ALL,
 		// .player_state = STATE_NOJET,
+		.player_state = STATE_NOSHIELD,
 		.player_anim = IDLE,
 	};
 	player_set_anim(IDLE);
@@ -126,8 +127,10 @@ void player_update(void) {
 		if (key_hit(KEY_SHOOT)) {
 			if (player.flags & HFLIP) {
 				muzzle_spawn(center.x + -30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, HFLIP);
+				bullet_spawn(center.x + -12*FIX_SCALE, center.y + 4*FIX_SCALE, -1);
 			} else {
 				muzzle_spawn(center.x + 30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, 0);
+				bullet_spawn(center.x + 12*FIX_SCALE, center.y + 4*FIX_SCALE, 1);
 			}
 		}
 	}
@@ -145,6 +148,9 @@ void player_update(void) {
 		if (key_released(KEY_JUMP) && player.vely < 0) {
 			player.vely /= 2;
 		}
+	}
+	if (player.player_state != STATE_NOSHIELD) {
+		shield_update();
 	}
 	
 	
