@@ -1,12 +1,11 @@
+
+#define ISMAIN
 #include "common.h"
+
 #include "soundbank_bin.h"
 #include "tte_multiobj.h"
 #include "fonts/Volter.h"
 
-int global_tick;
-int scrollx, scrolly;
-
-int aff_rotate_270;
 
 int main(void) {
 	irq_init(NULL);

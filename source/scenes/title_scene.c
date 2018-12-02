@@ -5,6 +5,8 @@
 #include "fonts/Volter.h"
 #include "fonts/GelatinMono.h"
 
+static entity_t label_hello;
+
 static void show(void) {
 	
 	pal_bg_mem[0] = RGB15(10, 0, 10);

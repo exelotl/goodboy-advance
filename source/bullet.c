@@ -3,7 +3,6 @@
 
 static const anim_t AnimBullet = { .speed = 3, .loop = 1, .len = 4, .frames = (int[]){0,1,2,3} };
 
-entity_t bullets[BULLET_COUNT];
 static uint bullet_tid;
 
 static const int BULLET_SPEED = Fix(4.0);
@@ -34,7 +33,7 @@ entity_t *bullet_spawn(int x, int y, int dir) {
 			.flags = ACTIVE,
 			.velx = dir > 0 ? BULLET_SPEED : -BULLET_SPEED,
 		};
-		set_center(e, (vec_t){x, y});
+		set_center(e, (vec2){x, y});
 		set_anim(e, &AnimBullet);
 	}
 	return e;
@@ -48,10 +47,15 @@ void bullets_update(void) {
 		
 		entity_animate(e);
 		
+		if (abs(player.x - e->x) > Fix(200)) {
+			entity_deactivate(e);
+			return;
+		}
+		
 		bool hit = entity_move_x(e, e->velx) || entity_move_y(e, e->vely);
 		if (hit) {
 			entity_deactivate(e);
-			vec_t center = get_center(e);
+			vec2 center = get_center(e);
 			entity_t * fx = muzzle_spawn_impact(center.x, center.y, e->velx);
 			if (fx) {
 				fx->x += (e->velx > 0) ? Fix(-16) : Fix(16);

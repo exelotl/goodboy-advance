@@ -6,10 +6,8 @@ static const int AnimZombieFall[] = {11};
 static const int AnimZombieAngryRun[] = {12,13,14,15,16,17};
 static const int AnimZombieAngryFall[] = {18};
 
-entity_t zombies[ZOMBIE_COUNT];
 
 static uint zombie_tid;
-
 
 static const int SPEED = (int)(1.0f * (FIX_SCALE));
 static const int SPEED_ANGRY = (int)(2.0f * (FIX_SCALE));

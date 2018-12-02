@@ -3,8 +3,6 @@
 
 static const anim_t AnimShield = { .speed = 2, .loop = 1, .len = 8, .frames = (int[]){0,1,2,3,4,5,6,7} };
 
-entity_t shield;
-
 uint shield_init(uint tid) {
 	shield = (entity_t) {
 		.tid = tid,

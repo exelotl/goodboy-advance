@@ -76,8 +76,6 @@ static const int SPEED = (int)(2.0f * (FIX_SCALE));
 static const int GRAVITY = (int)(0.2f * (FIX_SCALE));
 static const int JUMP_SPEED = (int)(4.25f * (FIX_SCALE));
 
-entity_t player;
-
 uint player_init(uint tid) {
 	player = (entity_t) {
 		.tid = tid,
@@ -121,7 +119,7 @@ void player_update(void) {
 		player.velx = 0;
 	}
 	
-	vec_t center = get_center(&player);
+	vec2 center = get_center(&player);
 	
 	if (player.player_state != STATE_NOGUN) {
 		if (key_hit(KEY_SHOOT)) {
@@ -194,7 +192,7 @@ void player_update(void) {
 	int px = player.x >> FIX_SHIFT;
 	int py = player.y >> FIX_SHIFT;
 	
-	vec_t cam_pos = get_center(&player);
+	vec2 cam_pos = get_center(&player);
 	scrollx = (cam_pos.x>>FIX_SHIFT) - (240/2);
 	scrolly = (cam_pos.y>>FIX_SHIFT) - (160/2 + 2);
 	

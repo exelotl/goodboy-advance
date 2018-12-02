@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include "soundbank.h"
 
+#ifdef ISMAIN
+	#define def
+#else
+	#define def extern
+#endif
 
 typedef struct scene_t {
 	void (*show)(void);
@@ -14,12 +19,12 @@ typedef struct scene_t {
 void scene_set(scene_t scene);
 void scene_update();
 
-extern const scene_t title_scene, game_scene;
+def const scene_t title_scene, game_scene;
 
 #define CELL_SIZE 16
 #define CELL_SHIFT 4
-#define LEVEL_WIDTH_CELLS 32
-#define LEVEL_HEIGHT_CELLS 32
+#define LEVEL_WIDTH_CELLS 64
+#define LEVEL_HEIGHT_CELLS 64
 #define LEVEL_CELL_COUNT (LEVEL_WIDTH_CELLS*LEVEL_HEIGHT_CELLS)
 
 #define CELL_EMPTY 0
@@ -42,9 +47,10 @@ typedef struct anim_t {
 	int loop;
 } anim_t;
 
-typedef struct vec_t {
+
+typedef struct vec2 {
 	FIXED x, y;
-} vec_t;
+} vec2;
 
 
 #define ACTIVE 0x0001  // does this entity exist in the world?
@@ -125,13 +131,13 @@ inline void set_vflip(entity_t *e, bool vflip) {
 	if (vflip) e->flags |= VFLIP;
 	else e->flags &= ~VFLIP;
 }
-inline vec_t get_center(entity_t *e) {
-	return (vec_t) {
+inline vec2 get_center(entity_t *e) {
+	return (vec2) {
 		.x = e->x + (e->w << FIX_SHIFT) / 2,
 		.y = e->y + (e->h << FIX_SHIFT) / 2,
 	};
 }
-inline void set_center(entity_t *e, vec_t pos) {
+inline void set_center(entity_t *e, vec2 pos) {
 	e->x = pos.x - (e->w << FIX_SHIFT) / 2;
 	e->y = pos.y - (e->h << FIX_SHIFT) / 2;
 }
@@ -170,8 +176,8 @@ inline bool map_collide_at(entity_t *e, FIXED dx, FIXED dy) {
 
 // some globals
 
-extern int global_tick;
-extern int scrollx, scrolly;  // camera
+def int global_tick;
+def int scrollx, scrolly;  // camera
 
 // sizes of various entity arrays
 
@@ -181,9 +187,23 @@ extern int scrollx, scrolly;  // camera
 
 // entity declarations
 
-extern entity_t player;
-extern entity_t label_hello;
-extern entity_t zombies[ZOMBIE_COUNT];
+def entity_t player;
+def entity_t shield;
+def entity_t label_dialog;
+def entity_t bullets[BULLET_COUNT];
+def entity_t muzzles[MUZZLE_COUNT];
+def entity_t zombies[ZOMBIE_COUNT];
+
+def int dialog_has_input;
+def int dialog_visible;
+
+// reserved affine indices
+def int aff_rotate_270;
+
+
+void dialog_init(void);
+void dialog_say(char *str);
+void dialog_update(void);
 
 uint label_init(entity_t *label, const TFont *font, uint ink, uint shadow, uint tid, uint obj_count);
 void label_begin_write(entity_t *label);
@@ -221,10 +241,6 @@ int reserve_obj_multi(int n);
 int reserve_aff(void);
 int reserve_aff_perm(void);
 void oam_update(void);
-
-
-// reserved affine indices
-extern int aff_rotate_270;
 
 
 // debugging utilities

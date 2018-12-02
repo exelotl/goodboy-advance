@@ -4,8 +4,6 @@
 #include "fonts/Acknowledge.h"
 #include "fonts/Volter.h"
 
-entity_t label_hello;
-
 #define LABEL_OBJ_W 8
 #define LABEL_OBJ_H 4
 
@@ -43,7 +41,7 @@ void label_begin_write(entity_t *label) {
 }
 
 void label_update_all(void) {
-	label_update(&label_hello);
+	label_update(&label_dialog);
 }
 
 void label_update(entity_t *label) {

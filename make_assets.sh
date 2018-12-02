@@ -17,6 +17,26 @@ BG_OPTIONS="$BG_OPTIONS -m"         # produce map data
 BG_OPTIONS="$BG_OPTIONS -mR4"       # entries for 4bpp tiles
 BG_OPTIONS="$BG_OPTIONS -mLs"       # regular bg broken into screenblocks
 
+BG4_OPTIONS=""
+BG4_OPTIONS="$BG4_OPTIONS -ftc"       # output to C files
+BG4_OPTIONS="$BG4_OPTIONS -gt"        # output tiled graphics
+BG4_OPTIONS="$BG4_OPTIONS -gB4"       # output 8bpp graphics
+BG4_OPTIONS="$BG4_OPTIONS -gu8"       # output data as byte array
+BG4_OPTIONS="$BG4_OPTIONS -gT 000000" # transparent colour
+BG4_OPTIONS="$BG4_OPTIONS -m"         # produce map data
+BG4_OPTIONS="$BG4_OPTIONS -mR4"       # entries for 4bpp tiles
+BG4_OPTIONS="$BG4_OPTIONS -mLs"       # regular bg broken into screenblocks
+
+BGAFF_OPTIONS=""
+BGAFF_OPTIONS="$BGAFF_OPTIONS -ftc"       # output to C files
+BGAFF_OPTIONS="$BGAFF_OPTIONS -gt"        # output tiled graphics
+BGAFF_OPTIONS="$BGAFF_OPTIONS -gB8"       # output 4bpp graphics
+BGAFF_OPTIONS="$BGAFF_OPTIONS -gu8"       # output data as byte array
+BGAFF_OPTIONS="$BGAFF_OPTIONS -gT 000000" # transparent colour
+BGAFF_OPTIONS="$BGAFF_OPTIONS -m"         # produce map data
+BGAFF_OPTIONS="$BGAFF_OPTIONS -mRa"       # entries for affine tiles
+BGAFF_OPTIONS="$BGAFF_OPTIONS -mLa"       # affine map layout
+
 SPRITE_8x8=""
 SPRITE_8x8="$SPRITE_8x8 -ftc"       # output to C files
 SPRITE_8x8="$SPRITE_8x8 -gt"        # output tiled graphics
@@ -28,7 +48,8 @@ SPRITE_8x8="$SPRITE_8x8 -pe 16"     # up to 16 colours in the palette
 SPRITE_16x16="$SPRITE_8x8 -Mw 2 -Mh 2"
 SPRITE_32x32="$SPRITE_8x8 -Mw 4 -Mh 4"
 
-grit $ASSETS/levels/Level1.png $BG_OPTIONS
+grit $ASSETS/BgTalkie.png $BG4_OPTIONS
+grit $ASSETS/levels/Level1.png $BGAFF_OPTIONS
 
 grit $ASSETS/SprPlayer.png $SPRITE_32x32
 grit $ASSETS/SprMuzzle.png $SPRITE_32x32
