@@ -26,6 +26,11 @@ bool entity_move_x(entity_t *e, FIXED dx) {
 }
 
 bool did_hit_y(entity_t *e, FIXED dy) {
+	// Could use this to fix oneway bug??
+	// int oldh = e->h;
+	// int newh = 15;
+	// int diffh = newh-oldh;
+	
 	int flags = map_collide_at(e, 0, dy);
 	if (flags & (CELL_SOLID | CELL_SPIKE)) {
 		return true;

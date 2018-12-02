@@ -5,6 +5,8 @@
 #include "assets/SprShield.h"
 #include "assets/SprBullet.h"
 #include "assets/SprBreakable.h"
+#include "assets/SprBarrier.h"
+#include "assets/SprSacrificedItems.h"
 #include "assets/BgTalkie.h"
 #include "assets/BgPlanet.h"
 #include "fonts/Acknowledge.h"
@@ -12,7 +14,7 @@
 #include "fonts/GelatinMono.h"
 #include "assets/levels.h"
 
-static const level_t *level = &Level1;
+static const level_t *level = &Level2;
 
 static int cells[LEVEL_CELL_COUNT];
 
@@ -26,18 +28,22 @@ const int level_palbank = 0;
 const int level_cb = 0;      // tile gfx
 const int level_sb = 24;     // entries
 
+// TODO figure out why talkie aint talkin
 const int talkie_palbank = 2;
-const int talkie_cb = 1;      // tile gfx
-const int talkie_sb = 23;     // entries
+const int talkie_cb = 2;      // tile gfx
+const int talkie_sb = 20;     // entries
 
 const int planet_palbank = 3;
 const int planet_cb = 2;      // tile gfx
 const int planet_sb = 22;     // entries
 
+
 static void show(void) {
 				
 	scrollx = 0;
 	scrolly = 0;
+	parallax_x = 0;
+	parallax_y = 0;
 	
 	for (int i = 0; i < LEVEL_CELL_COUNT; i++) {
 		cells[i] = level->cells[i];
@@ -49,12 +55,12 @@ static void show(void) {
 	dma3_cpy(&se_mem[level_sb], level->map, level->mapLen);
 	
 	// TALKIE
-	// dma3_cpy(pal_bg_bank[talkie_palbank], BgTalkiePal, BgTalkiePalLen);
-	// dma3_cpy(&tile_mem[talkie_cb], BgTalkieTiles, BgTalkieTilesLen);
-	// dma3_cpy(&se_mem[talkie_sb], BgTalkieMap, BgTalkieMapLen);
-	// for (int i=0; i<sb_size_short; i++) {
-	// 	se_mem[talkie_sb][i] |= SE_PALBANK(talkie_palbank);
-	// }
+	dma3_cpy(pal_bg_bank[talkie_palbank], BgTalkiePal, BgTalkiePalLen);
+	dma3_cpy(&tile_mem[talkie_cb], BgTalkieTiles, BgTalkieTilesLen);
+	dma3_cpy(&se_mem[talkie_sb], BgTalkieMap, BgTalkieMapLen);
+	for (int i=0; i<sb_size_short; i++) {
+		se_mem[talkie_sb][i] |= SE_PALBANK(talkie_palbank);
+	}
 	
 	// PLANET
 	dma3_cpy(pal_bg_bank[planet_palbank], BgPlanetPal, BgPlanetPalLen);
@@ -70,17 +76,18 @@ static void show(void) {
 				| DCNT_BG0
 				| DCNT_BG1
 				// | DCNT_BG2
-				// | DCNT_BG3
+				| DCNT_BG3
 				| DCNT_OBJ     // enable sprites
 				| DCNT_OBJ_1D; // 1D tile mapping for sprites
 	
 	REG_BG0CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(level_sb) | BG_CBB(level_cb) | BG_REG_64x64; // main map
-	REG_BG1CNT = BG_PRIO(3) | BG_4BPP | BG_SBB(planet_sb) | BG_CBB(planet_sb) | BG_REG_32x32;
+	REG_BG1CNT = BG_PRIO(3) | BG_4BPP | BG_SBB(planet_sb) | BG_CBB(planet_cb) | BG_REG_32x32;
+	// REG_BG2CNT = BG_PRIO(3) | BG_4BPP | BG_SBB(planet_sb+1) | BG_CBB(planet_cb) | BG_REG_32x32;
 	// REG_BG2CNT = BG_PRIO(2) | BG_8BPP | BG_SBB(29) | BG_CBB(0);
 	// REG_BG2CNT = BG_PRIO(2) | BG_SBB(level_sb) | BG_8BPP | BG_CBB(level_cb) | BG_AFF_128x128;
-	// REG_BG3CNT = BG_PRIO(0) | BG_4BPP | BG_SBB(27) | BG_CBB(1); // talkie
+	REG_BG3CNT = BG_PRIO(0) | BG_4BPP | BG_SBB(talkie_sb) | BG_CBB(talkie_cb); // talkie
 	
-	REG_BG_AFFINE[2] = bg_aff_default;
+	// REG_BG_AFFINE[2] = bg_aff_default;
 	
 	// set up sprite palettes
 	dma3_cpy(&pal_obj_bank[0], SprPlayerPal, SprPlayerPalLen);
@@ -88,6 +95,8 @@ static void show(void) {
 	dma3_cpy(&pal_obj_bank[2], SprShieldPal, SprShieldPalLen);
 	dma3_cpy(&pal_obj_bank[3], SprBulletPal, SprBulletPalLen);
 	dma3_cpy(&pal_obj_bank[4], SprBreakablePal, SprBreakablePalLen);
+	dma3_cpy(&pal_obj_bank[5], SprBarrierPal, SprBarrierPalLen);
+	dma3_cpy(&pal_obj_bank[6], SprSacrificedItemsPal, SprSacrificedItemsPalLen);
 	// dma3_cpy(&pal_obj_bank[1], SprShared1Pal, SprShared1PalLen);
 	
 	// text palette
@@ -104,6 +113,7 @@ static void show(void) {
 	tid = shield_init(tid);
 	tid = bullets_init(tid);
 	tid = breakables_init(tid);
+	tid = altars_init(tid);
 	
 	dialog_init();
 	
@@ -129,6 +139,7 @@ static void update(void) {
 	bullets_update();
 	muzzles_update();
 	breakables_update();
+	altars_update();
 	
 	//// shield_update();  // player is responsible for updating shield
 	
@@ -154,10 +165,12 @@ static void update(void) {
 	dma3_cpy(&se_mem[level_sb+2], src_sb_2, sb_size);
 	dma3_cpy(&se_mem[level_sb+3], src_sb_3, sb_size);
 	
-	// REG_BG2X = scrollx << 8;
-	// REG_BG2Y = scrolly << 8;
 	REG_BG0HOFS = ofs_x % CHUNK_WIDTH_PIXELS;
 	REG_BG0VOFS = ofs_y % CHUNK_HEIGHT_PIXELS;
+	
+	// REG_BG1HOFS = parallax_x >> FIX_SHIFT;
+	// REG_BG1VOFS = parallax_y >> FIX_SHIFT;
+	
 	// REG_BG0HOFS = scrollx;
 	// REG_BG0VOFS = scrolly;
 }

@@ -113,6 +113,7 @@ function makeLevel(levelJsonPath) {
 
 loadTileset('assets/tileset.json');
 makeLevel('assets/levels/Level1.json');
+makeLevel('assets/levels/Level2.json');
 
 fs.writeFileSync(outHeaderPath, outHeader.join('\n'));
 fs.writeFileSync(outSourcePath, outSource.join('\n'));

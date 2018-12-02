@@ -18,12 +18,15 @@ void spawn_all(const level_t *level) {
 				break;
 			case 2:
 				// altarjetpack
+				altarjetpack_spawn(x, y - Fix(16));
 				break;
 			case 4:
 				// altarshield
+				altarshield_spawn(x, y - Fix(16));
 				break;
 			case 5:
 				// altargun
+				altargun_spawn(x, y - Fix(16));
 				break;
 			case 6:
 				// gem

@@ -50,8 +50,7 @@ entity_t *breakable_spawn(int x, int y) {
 void breakables_check_bullet(entity_t *bullet) {
 	for (int i = 0; i < BREAKABLE_COUNT; i++) {
 		entity_t *e = &breakables[i];
-		if (!e->flags & ACTIVE) continue;
-		if (entity_collide(bullet, e)) {
+		if ((e->flags & ACTIVE) && (e->anim == &AnimIdle) && entity_collide(bullet, e)) {
 			set_anim(e, &AnimDie);
 			brk_set_cells(e->x, e->y, CELL_EMPTY);
 			e->brk_timer = 0;

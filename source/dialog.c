@@ -21,6 +21,6 @@ void dialog_update(void) {
 		
 	}
 	
-	REG_BG0HOFS = dialog_scroll_x;
-	REG_BG0VOFS = dialog_scroll_y;
+	// REG_BG0HOFS = dialog_scroll_x;
+	// REG_BG0VOFS = dialog_scroll_y;
 }

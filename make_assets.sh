@@ -47,16 +47,20 @@ SPRITE_8x8="$SPRITE_8x8 -pe 16"     # up to 16 colours in the palette
 
 SPRITE_16x16="$SPRITE_8x8 -Mw 2 -Mh 2"
 SPRITE_32x32="$SPRITE_8x8 -Mw 4 -Mh 4"
+SPRITE_32x64="$SPRITE_8x8 -Mw 4 -Mh 8"
 
 grit $ASSETS/BgTalkie.png $BG4_OPTIONS
 grit $ASSETS/BgPlanet.png $BG4_OPTIONS
 grit $ASSETS/levels/Level1.png $BG_OPTIONS
+grit $ASSETS/levels/Level2.png $BG_OPTIONS
 
 grit $ASSETS/SprPlayer.png $SPRITE_32x32
 grit $ASSETS/SprMuzzle.png $SPRITE_32x32
 grit $ASSETS/SprShield.png $SPRITE_32x32
 grit $ASSETS/SprBullet.png $SPRITE_8x8
 grit $ASSETS/SprBreakable.png $SPRITE_32x32
+grit $ASSETS/SprBarrier.png $SPRITE_32x64
+grit $ASSETS/SprSacrificedItems.png $SPRITE_32x32
 
 # a bunch of 16x16 graphics that are able to use a single palette
 # note: first graphic must contain transparent (#408000) pixels

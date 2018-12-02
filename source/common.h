@@ -114,6 +114,12 @@ typedef struct entity_t {
 		struct {
 			int brk_timer;
 		};
+		struct {
+			bool door_closed;
+		};
+		struct {
+			bool icon_active;
+		};
 		// unused
 		struct {
 			int health;
@@ -200,6 +206,7 @@ inline int map_collide_at(entity_t *e, FIXED dx, FIXED dy) {
 
 def int global_tick;
 def int scrollx, scrolly;  // camera
+def int parallax_x, parallax_y;
 
 // sizes of various entity arrays
 
@@ -217,6 +224,10 @@ def entity_t bullets[BULLET_COUNT];
 def entity_t muzzles[MUZZLE_COUNT];
 def entity_t zombies[ZOMBIE_COUNT];
 def entity_t breakables[BREAKABLE_COUNT];
+
+def int shake_timer;
+def int shake_x;
+def int shake_y;
 
 def int dialog_has_input;
 def int dialog_visible;
@@ -254,12 +265,19 @@ void shield_update(void);
 uint breakables_init(uint tid);
 void breakables_update(void);
 
+uint altars_init(uint tid);
+void altars_update(void);
+
 entity_t *zombie_spawn(int x, int y);
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
 entity_t *muzzle_spawn_impact(int x, int y, int dir);
 entity_t *shield_spawn(int x, int y);
 entity_t *bullet_spawn(int x, int y, int dir);
 entity_t *breakable_spawn(int x, int y);
+
+void altargun_spawn(int x, int y);
+void altarshield_spawn(int x, int y);
+void altarjetpack_spawn(int x, int y);
 
 void spawn_all(const level_t *level);
 void map_set_cell(int x, int y, int val); 

@@ -76,6 +76,8 @@ static const int SPEED = (int)(2.0f * (FIX_SCALE));
 static const int GRAVITY = (int)(0.2f * (FIX_SCALE));
 static const int JUMP_SPEED = (int)(4.25f * (FIX_SCALE));
 
+int prev_state;
+
 uint player_init(uint tid) {
 	player = (entity_t) {
 		.tid = tid,
@@ -84,18 +86,27 @@ uint player_init(uint tid) {
 		.y = 20 << FIX_SHIFT,
 		.w = 20,
 		.h = 27, 
-		// .player_state = STATE_ALL,
+		.player_state = STATE_ALL,
 		// .player_state = STATE_NOJET,
-		.player_state = STATE_NOSHIELD,
+		// .player_state = STATE_NOSHIELD,
 		.player_anim = IDLE,
 	};
 	player_set_anim(IDLE);
+	prev_state = player.player_state;
 	return tid + 4*4; // single frame
 }
 
 void player_update(void) {
+	int start_x = player.x;
+	int start_y = player.y;
 	
 	if (!is_active(&player)) return;
+	
+	// account for random state changes by altars.
+	if (prev_state != player.player_state) {
+		player_set_anim(player.player_anim);
+		prev_state = player.player_state;
+	}
 	
 	entity_animate(&player);
 	
@@ -213,8 +224,18 @@ void player_update(void) {
 	int py = player.y >> FIX_SHIFT;
 	
 	vec2 cam_pos = get_center(&player);
+	
+	if (shake_timer > 0) {
+		shake_timer--;
+		cam_pos.x += qran_range(-shake_timer*44, shake_timer*44);
+		cam_pos.y += qran_range(-shake_timer*44, shake_timer*44);
+	}
+	
 	scrollx = (cam_pos.x>>FIX_SHIFT) - (240/2);
 	scrolly = (cam_pos.y>>FIX_SHIFT) - (160/2 + 2);
+	
+	parallax_x += CLAMP(player.x - start_x, -FIX_ONE, FIX_ONE) / 8;
+	parallax_y += CLAMP(player.y - start_y, -FIX_ONE, FIX_ONE) / 8;
 	
 	obj_set_attr(&obj_mem[reserve_obj()],
 		((py - scrolly - 5) & ATTR0_Y_MASK) | ATTR0_SQUARE,
