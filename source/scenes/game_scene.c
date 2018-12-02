@@ -2,6 +2,7 @@
 #include "assets/SprShared1.h"
 #include "assets/SprPlayer.h"
 #include "assets/SprMuzzle.h"
+#include "assets/SprShield.h"
 #include "fonts/Acknowledge.h"
 #include "fonts/Volter.h"
 #include "fonts/GelatinMono.h"
@@ -36,6 +37,7 @@ static void show(void) {
 	// set up sprite palettes
 	dma3_cpy(&pal_obj_bank[0], SprPlayerPal, SprPlayerPalLen);
 	dma3_cpy(&pal_obj_bank[1], SprMuzzlePal, SprMuzzlePalLen);
+	dma3_cpy(&pal_obj_bank[2], SprShieldPal, SprShieldPalLen);
 	// dma3_cpy(&pal_obj_bank[1], SprShared1Pal, SprShared1PalLen);
 	
 	// text palette
@@ -50,9 +52,10 @@ static void show(void) {
 	// tid = label_init(&label_hello, &VolterFont, 1, 2, tid, 2);
 	tid = zombies_init(tid);
 	tid = muzzles_init(tid);
+	tid = shield_init(tid);
 	
-	zombie_spawn(90<<FIX_SHIFT, 40<<FIX_SHIFT);
-	zombie_spawn(40<<FIX_SHIFT, 80<<FIX_SHIFT);
+	// zombie_spawn(90<<FIX_SHIFT, 40<<FIX_SHIFT);
+	// zombie_spawn(40<<FIX_SHIFT, 80<<FIX_SHIFT);
 	
 	// label_hello.x = 30 << FIX_SHIFT;
 	// label_hello.y = 100 << FIX_SHIFT;
@@ -72,6 +75,7 @@ static void update(void) {
 	player_update();
 	// zombies_update();
 	muzzles_update();
+	shield_update();
 	// label_update_all();
 	
 	REG_BG0HOFS = scrollx;

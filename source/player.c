@@ -120,15 +120,14 @@ void player_update(void) {
 		player.velx = 0;
 	}
 	
-	int center_x = player.x + (player.w/2)*FIX_SCALE;
-	int center_y = player.y + (player.h/2)*FIX_SCALE;
+	vec_t center = get_center(&player);
 	
 	if (player.player_state != STATE_NOGUN) {
 		if (key_hit(KEY_SHOOT)) {
 			if (player.flags & HFLIP) {
-				muzzle_spawn(center_x + -30*FIX_SCALE, center_y + 4*FIX_SCALE, 0, HFLIP);
+				muzzle_spawn(center.x + -30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, HFLIP);
 			} else {
-				muzzle_spawn(center_x + 30*FIX_SCALE, center_y + 4*FIX_SCALE, 0, 0);
+				muzzle_spawn(center.x + 30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, 0);
 			}
 		}
 	}
@@ -138,9 +137,9 @@ void player_update(void) {
 			player.vely = -JUMP_SPEED;
 			
 			if (player.flags & HFLIP) {
-				muzzle_spawn(center_x + 8*FIX_SCALE, center_y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+				muzzle_spawn(center.x + 8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
 			} else {
-				muzzle_spawn(center_x + -8*FIX_SCALE, center_y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+				muzzle_spawn(center.x + -8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
 			}
 		}
 		if (key_released(KEY_JUMP) && player.vely < 0) {
@@ -189,8 +188,9 @@ void player_update(void) {
 	int px = player.x >> FIX_SHIFT;
 	int py = player.y >> FIX_SHIFT;
 	
-	scrollx = px - (240/2);
-	scrolly = py - (160/2 - 10);
+	vec_t cam_pos = get_center(&player);
+	scrollx = (cam_pos.x>>FIX_SHIFT) - (240/2);
+	scrolly = (cam_pos.y>>FIX_SHIFT) - (160/2 + 2);
 	
 	obj_set_attr(&obj_mem[reserve_obj()],
 		((py - scrolly - 5) & ATTR0_Y_MASK) | ATTR0_SQUARE,

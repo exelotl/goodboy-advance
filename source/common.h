@@ -42,6 +42,10 @@ typedef struct anim_t {
 	int loop;
 } anim_t;
 
+typedef struct vec_t {
+	FIXED x, y;
+} vec_t;
+
 
 #define ACTIVE 0x0001  // does this entity exist in the world?
 #define HFLIP 0x1000   // same as ATTR1_HFLIP
@@ -121,6 +125,16 @@ inline void set_vflip(entity_t *e, bool vflip) {
 	if (vflip) e->flags |= VFLIP;
 	else e->flags &= ~VFLIP;
 }
+inline vec_t get_center(entity_t *e) {
+	return (vec_t) {
+		.x = e->x + (e->w << FIX_SHIFT) / 2,
+		.y = e->y + (e->h << FIX_SHIFT) / 2,
+	};
+}
+inline void set_center(entity_t *e, vec_t pos) {
+	e->x = pos.x - (e->w << FIX_SHIFT) / 2;
+	e->y = pos.y - (e->h << FIX_SHIFT) / 2;
+}
 
 inline bool collide(int ax, int ay, int aw, int ah,
                     int bx, int by, int bw, int bh) {
@@ -186,8 +200,13 @@ void zombies_update(void);
 uint muzzles_init(uint tid);
 void muzzles_update(void);
 
+uint shield_init(uint tid);
+void shield_update(void);
+
 entity_t *zombie_spawn(int x, int y);
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
+entity_t *shield_spawn(int x, int y);
+
 
 
 // OAM management
@@ -226,6 +245,8 @@ inline FIXED fxceil(FIXED fx) {
 }
 
 #define ANGLE(deg) ((deg<<16)/360)
+
+#define Fix(f) (int)(f * FIX_SCALE)
 
 inline int distance_sq(int x1, int y1, int x2, int y2) {
 	int dx = x2 - x1;
