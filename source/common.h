@@ -19,7 +19,7 @@ typedef struct scene_t {
 void scene_set(scene_t scene);
 void scene_update();
 
-extern const scene_t title_scene, game_scene, fake_end_scene;
+extern const scene_t title_scene, game_scene, fake_end_scene, end_scene;
 
 extern int slide_number;  // which image to display on title screen
 
@@ -250,6 +250,8 @@ def int parallax_x, parallax_y;
 
 
 // entity declarations
+
+extern const level_t *level; // current level
 
 def entity_t player;
 def entity_t rocket; // for collision tests, updated in altar.c?

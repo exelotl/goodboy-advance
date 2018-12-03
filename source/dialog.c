@@ -12,6 +12,10 @@ static int next_x;
 static int next_duration;
 static const char *next_str;
 
+static int revealed_chars;
+static const char *current_str;
+static int str_len;
+
 void dialog_init(void) {
 	// dialog_has_input = false;
 	// dialog_visible = false;
@@ -25,7 +29,13 @@ void dialog_say(const char *str, int duration, int x) {
 	label_dialog.x = x;
 	dialog_timer = duration;
 	label_begin_write(&label_dialog);
-	tte_write(str);
+	current_str = str;
+	
+	str_len = 0;
+	while (str[str_len] != 0) str_len++;
+	revealed_chars = 0;
+	
+	// tte_write(str);
 	next_str = NULL;
 }
 
@@ -40,6 +50,11 @@ void dialog_update(void) {
 	if (dialog_timer > 0) {
 		dialog_timer--;
 		label_update(&label_dialog);
+	
+		if (revealed_chars < str_len && (global_tick % 2 == 0)) {
+			tte_putc(current_str[revealed_chars]);
+			revealed_chars++;
+		}
 	} else if (next_str) {
 		dialog_say(next_str, next_duration, next_x);
 	}

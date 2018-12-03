@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include "assets/levels.h"
 #include "assets/SprBarrier.h"
 #include "assets/SprSacrificedItems.h"
 
@@ -97,7 +98,11 @@ static void level_complete_wait(void) {
 }
 static void level_complete_set_scene(void) {
 	slide_number = 2;
-	scene_set(title_scene);
+	if (level == &Level1) {
+		scene_set(fake_end_scene);
+	} else {
+		scene_set(end_scene);
+	}
 }
 
 static void rocket_update() {

@@ -3,17 +3,25 @@
 #include "assets/SprShared1.h"
 #include "assets/BgIntro1.h"
 #include "assets/BgIntro2.h"
+#include "assets/BgTitle.h"
 #include "fonts/Acknowledge.h"
 #include "fonts/Volter.h"
+#include "assets/SprPlayer.h"
 #include "fonts/GelatinMono.h"
-
-static entity_t label_hello;
 
 static bool has_pressed;
 
-int slide_number = 1;
+// player anim for first screen only
+static entity_t title_player;
+static const anim_t AnimWalkAll = { .speed = 5, .loop = 1, .len = 8, .frames = (int[]){0,1,2,3,4,5,6,7} };
+static uint title_player_init(uint tid);
+static void title_player_update(void);
 
-	
+static entity_t label_anykey;
+
+
+int slide_number = 0;
+
 // sources
 static unsigned short *ImagePal;
 static unsigned char *ImageTiles;
@@ -44,6 +52,7 @@ static void show(void) {
 	
 	switch (slide_number) {
 		case 0:
+			SetImage(BgTitle);
 			break;
 		case 1:
 			SetImage(BgIntro1);
@@ -80,12 +89,17 @@ static void show(void) {
 	
 	// reserve sprite tiles in VRAM
 	uint tid = 0;
-	// tid = label_init(&label_hello, &VolterFont, 1, 2, tid, 3);
+	tid = title_player_init(tid);
+	tid = label_init(&label_anykey, &VolterFont, 1, 2, tid, 3);
 	
-	// label_hello.x = 30 << FIX_SHIFT;
-	// label_hello.y = 100 << FIX_SHIFT;
-	// label_begin_write(&label_hello);
-	// tte_write("press any key to start");
+	label_anykey.x = Fix(88);
+	label_anykey.y = Fix(130);
+	label_begin_write(&label_anykey);
+	tte_write("PRESS START");
+	
+	// set up sprite palettes
+	dma3_cpy(&pal_obj_target_bank[0], SprPlayerPal, SprPlayerPalLen);
+	
 	
 	// mmStart(MOD_SPACECAT, MM_PLAY_LOOP);
 	
@@ -117,9 +131,10 @@ static void goto_next_scene(void) {
 	
 	switch (slide_number) {
 		case 0:
+			slide_number = 1;
+			scene_set(title_scene);
 			break;
 		case 1:
-			SetImage(BgIntro1);
 			slide_number = 2;
 			scene_set(title_scene);
 			break;
@@ -134,10 +149,16 @@ static void goto_next_scene(void) {
 }
 
 static void update(void) {
-	// label_update(&label_hello);
 	fader_update();
 	
-	if (!has_pressed && key_hit(KEY_ANY)) {
+	if (slide_number == 0) {
+		title_player_update();
+		if ((global_tick % 64) < 32) {
+			label_update(&label_anykey);
+		}
+	}
+	
+	if (!has_pressed && key_hit(KEY_A | KEY_B | KEY_START)) {
 		int fade_out_speed = 4;
 		
 		// slow fade for transitioning to main game
@@ -154,3 +175,32 @@ const scene_t title_scene = {
 	.hide = hide,
 	.update = update,
 };
+
+
+static uint title_player_init(uint tid) {
+	title_player = (entity_t) {
+		.tid = tid,
+		.flags = ACTIVE,
+		.x = Fix(30),
+		.y = Fix(117),
+	};
+	set_anim(&title_player, &AnimWalkAll);
+	return tid + 4*4; // single frame
+}
+
+static void title_player_update(void) {
+	int px = title_player.x >> FIX_SHIFT;
+	int py = title_player.y >> FIX_SHIFT;
+	
+	entity_animate(&title_player);
+	
+	obj_set_attr(&obj_mem[reserve_obj()],
+		(py & ATTR0_Y_MASK) | ATTR0_SQUARE,
+		(px & ATTR1_X_MASK) | ATTR1_SIZE_32,
+		title_player.tid | ATTR2_PRIO(1) | ATTR2_PALBANK(0));
+	
+	dma3_cpy(
+		&tile_mem_obj[0][title_player.tid],
+		&SprPlayerTiles[title_player.anim->frames[title_player.frame] * sizeof(TILE) * 16],
+		sizeof(TILE) * 16);
+}

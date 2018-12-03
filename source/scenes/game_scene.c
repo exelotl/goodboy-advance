@@ -15,7 +15,7 @@
 #include "fonts/GelatinMono.h"
 #include "assets/levels.h"
 
-static const level_t *level = &Level1;
+const level_t *level = &Level1;
 
 static int cells[LEVEL_CELL_COUNT];
 
@@ -149,7 +149,7 @@ static void say_initial_dialog(void) {
 		dialog_say_next("It needs some power gems.", 160, Fix(40));
 	}
 	if (level == &Level2) {
-		dialog_say("Oh no, I crashed again.", 160, Fix(50));
+		dialog_say("Oh no! I crashed again!", 180, Fix(50));
 		dialog_say_next("Need more gems.", 160, Fix(70));
 	}
 }
