@@ -84,7 +84,7 @@ function makeLevel(levelJsonPath) {
 						type = 7;
 						break;
 					default:
-						console.warn('unrecognised type');
+						console.warn('unrecognised type', tinfo);
 						return;
 				}
 				spawns.push(`{ .type = ${type}, .x = ${x}, .y = ${y} },\n`);

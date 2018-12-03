@@ -12,9 +12,9 @@ BG_OPTIONS="$BG_OPTIONS -ftc"       # output to C files
 BG_OPTIONS="$BG_OPTIONS -gt"        # output tiled graphics
 BG_OPTIONS="$BG_OPTIONS -gB8"       # output 8bpp graphics
 BG_OPTIONS="$BG_OPTIONS -gu8"       # output data as byte array
-BG_OPTIONS="$BG_OPTIONS -gT00ff00" # transparent colour
+# BG_OPTIONS="$BG_OPTIONS -gT00ff00" # transparent colour
 BG_OPTIONS="$BG_OPTIONS -m"         # produce map data
-BG_OPTIONS="$BG_OPTIONS -mR4"       # entries for 4bpp tiles
+BG_OPTIONS="$BG_OPTIONS -mR8"       # entries for 4bpp tiles
 BG_OPTIONS="$BG_OPTIONS -mLs"       # regular bg broken into screenblocks
 
 BG4_OPTIONS=""
@@ -61,6 +61,7 @@ grit $ASSETS/SprBullet.png $SPRITE_8x8
 grit $ASSETS/SprBreakable.png $SPRITE_32x32
 grit $ASSETS/SprBarrier.png $SPRITE_32x64
 grit $ASSETS/SprSacrificedItems.png $SPRITE_32x32
+grit $ASSETS/SprGem.png $SPRITE_32x32
 
 # a bunch of 16x16 graphics that are able to use a single palette
 # note: first graphic must contain transparent (#408000) pixels

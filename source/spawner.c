@@ -30,9 +30,11 @@ void spawn_all(const level_t *level) {
 				break;
 			case 6:
 				// gem
+				gem_spawn(x, y - Fix(16));
 				break;
 			case 7:
 				// rocket
+				rocket_spawn(x - Fix(16), y - Fix(32));
 				break;
 			default:
 				break;

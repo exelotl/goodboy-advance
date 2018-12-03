@@ -7,6 +7,7 @@
 #include "assets/SprBreakable.h"
 #include "assets/SprBarrier.h"
 #include "assets/SprSacrificedItems.h"
+#include "assets/SprGem.h"
 #include "assets/BgTalkie.h"
 #include "assets/BgPlanet.h"
 #include "fonts/Acknowledge.h"
@@ -14,7 +15,7 @@
 #include "fonts/GelatinMono.h"
 #include "assets/levels.h"
 
-static const level_t *level = &Level2;
+static const level_t *level = &Level1;
 
 static int cells[LEVEL_CELL_COUNT];
 
@@ -97,6 +98,7 @@ static void show(void) {
 	dma3_cpy(&pal_obj_bank[4], SprBreakablePal, SprBreakablePalLen);
 	dma3_cpy(&pal_obj_bank[5], SprBarrierPal, SprBarrierPalLen);
 	dma3_cpy(&pal_obj_bank[6], SprSacrificedItemsPal, SprSacrificedItemsPalLen);
+	dma3_cpy(&pal_obj_bank[7], SprGemPal, SprGemPalLen);
 	// dma3_cpy(&pal_obj_bank[1], SprShared1Pal, SprShared1PalLen);
 	
 	// text palette
@@ -108,23 +110,30 @@ static void show(void) {
 	// reserve sprite tiles in VRAM
 	uint tid = 0;
 	tid = player_init(tid);
-	// tid = label_init(&label_dialog, &VolterFont, 1, 2, tid, 3);
+	tid = label_init(&label_dialog, &VolterFont, 1, 2, tid, 4);
 	tid = muzzles_init(tid);
 	tid = shield_init(tid);
 	tid = bullets_init(tid);
 	tid = breakables_init(tid);
 	tid = altars_init(tid);
+	tid = gems_init(tid);
 	
 	dialog_init();
 	
-	// label_dialog.x = 30 << FIX_SHIFT;
-	// label_dialog.y = 100 << FIX_SHIFT;
+	if (level == &Level1) {
+		dialog_say("My poor rocket.", 160, Fix(70));
+		dialog_say_next("It needs some power gems.", 160, Fix(40));
+	}
+	if (level == &Level2) {
+		dialog_say("Oh no, I crashed again.", 160, Fix(50));
+		dialog_say_next("Need more gems.", 160, Fix(70));
+	}
+	
 	// label_begin_write(&label_dialog);
-	// tte_write("Darn... looks like my ship\nhas crashed.");
+	// tte_write("Darn... looks like my ship has crashed.");
 	
 	// mmStart(MOD_SPACEDOG_OPTIMISED, MM_PLAY_LOOP);
 	// mmStart(MOD_SPACECAT, MM_PLAY_LOOP);
-	
 	
 	spawn_all(level);
 }
@@ -140,10 +149,9 @@ static void update(void) {
 	muzzles_update();
 	breakables_update();
 	altars_update();
+	gems_update();
 	
 	//// shield_update();  // player is responsible for updating shield
-	
-	// label_update_all();
 	
 	dialog_update();
 	

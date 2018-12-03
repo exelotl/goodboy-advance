@@ -55,6 +55,7 @@ void breakables_check_bullet(entity_t *bullet) {
 			brk_set_cells(e->x, e->y, CELL_EMPTY);
 			e->brk_timer = 0;
 			e->frame = 0;
+			shake_timer = 20;
 		}
 	}
 }

@@ -87,8 +87,6 @@ uint player_init(uint tid) {
 		.w = 20,
 		.h = 27, 
 		.player_state = STATE_ALL,
-		// .player_state = STATE_NOJET,
-		// .player_state = STATE_NOSHIELD,
 		.player_anim = IDLE,
 	};
 	player_set_anim(IDLE);
@@ -96,9 +94,14 @@ uint player_init(uint tid) {
 	return tid + 4*4; // single frame
 }
 
+static int respawn_timer = 0;
+
+static vec2 death_pos;  // for camera to still shake when dying
+
 void player_update(void) {
 	int start_x = player.x;
 	int start_y = player.y;
+	vec2 cam_pos;	
 	
 	if (!is_active(&player)) return;
 	
@@ -110,120 +113,155 @@ void player_update(void) {
 	
 	entity_animate(&player);
 	
-	player.velx = 0;
-	
-	int collide_down = map_collide_at(&player, 0, FIX_ONE + player.vely);
-	int collide_left = map_collide_at(&player, -SPEED, 0);
-	int collide_right = map_collide_at(&player, SPEED, 0);
-	
-	// bool on_oneway = player.vely > 0 && (collision_down & CELL_ONEWAY);
-	// bool on_floor = (collide_down & CELL_SOLID);
-	bool on_floor = did_hit_y(&player, FIX_ONE + player.vely);
-	
-	if (on_floor) {
-		player.flags |= CAN_JET;
+	if (player.player_anim == DEAD) {
+		
+		// death animation
+		
+		if ((player.y >> FIX_SHIFT)-scrolly > 170) {
+			if (respawn_timer-- < 0) {
+				// go to last altar
+				player.x = spawn_x;
+				player.y = spawn_y;
+				player_set_anim(IDLE);
+				set_hflip(&player, false);
+				// player.player_state = spawn_state;
+			}
+		} else {
+			player.vely += Fix(0.2);
+			player.y += player.vely;
+		}
+		
+		cam_pos = death_pos;
+		
 	} else {
-		player.vely += GRAVITY;
-	}
-	
-	if (key_is_down(KEY_LEFT) && !(collide_left & (CELL_SPIKE | CELL_SOLID))) {
-		player.velx = -SPEED;
-		set_hflip(&player, true);
-	}
-	if (key_is_down(KEY_RIGHT) && !(collide_right & (CELL_SPIKE | CELL_SOLID))) {
-		player.velx = SPEED;
-		set_hflip(&player, false);
-	}
-	if (key_is_up(KEY_LEFT) && key_is_up(KEY_RIGHT)) {
+		
 		player.velx = 0;
-	}
-	
-	vec2 center = get_center(&player);
-	
-	if (player.player_state != STATE_NOGUN) {
-		if (key_hit(KEY_SHOOT)) {
-			if (player.flags & HFLIP) {
-				muzzle_spawn(center.x + -30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, HFLIP);
-				bullet_spawn(center.x + -12*FIX_SCALE, center.y + 4*FIX_SCALE, -1);
-			} else {
-				muzzle_spawn(center.x + 30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, 0);
-				bullet_spawn(center.x + 12*FIX_SCALE, center.y + 4*FIX_SCALE, 1);
+		
+		int collide_down = map_collide_at(&player, 0, FIX_ONE + player.vely);
+		int collide_left = map_collide_at(&player, -SPEED, 0);
+		int collide_right = map_collide_at(&player, SPEED, 0);
+		
+		// bool on_oneway = player.vely > 0 && (collision_down & CELL_ONEWAY);
+		// bool on_floor = (collide_down & CELL_SOLID);
+		bool on_floor = did_hit_y(&player, FIX_ONE + player.vely) && player.velx >= 0;
+		
+		if (on_floor) {
+			player.flags |= CAN_JET;
+		} else {
+			player.vely += GRAVITY;
+		}
+		
+		if (key_is_down(KEY_LEFT) && !(collide_left & (CELL_SPIKE | CELL_SOLID))) {
+			player.velx = -SPEED;
+			set_hflip(&player, true);
+		}
+		if (key_is_down(KEY_RIGHT) && !(collide_right & (CELL_SPIKE | CELL_SOLID))) {
+			player.velx = SPEED;
+			set_hflip(&player, false);
+		}
+		if (key_is_up(KEY_LEFT) && key_is_up(KEY_RIGHT)) {
+			player.velx = 0;
+		}
+		
+		vec2 center = get_center(&player);
+		
+		if (player.player_state != STATE_NOGUN) {
+			if (key_hit(KEY_SHOOT)) {
+				if (player.flags & HFLIP) {
+					muzzle_spawn(center.x + -30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, HFLIP);
+					bullet_spawn(center.x + -12*FIX_SCALE, center.y + 2*FIX_SCALE, -1);
+				} else {
+					muzzle_spawn(center.x + 30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, 0);
+					bullet_spawn(center.x + 12*FIX_SCALE, center.y + 2*FIX_SCALE, 1);
+				}
 			}
 		}
-	}
-	
-	if (player.player_state != STATE_NOJET) {
-		// if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
-		if (key_hit(KEY_JUMP) && (player.flags & CAN_JET)) {
-			player.vely = -JUMP_SPEED;
-			player.flags &= ~CAN_JET;
-			if (player.flags & HFLIP) {
-				muzzle_spawn(center.x + 8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
-			} else {
-				muzzle_spawn(center.x + -8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+		
+		if (player.player_state != STATE_NOJET) {
+			// if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
+			if (key_hit(KEY_JUMP) && (player.flags & CAN_JET)) {
+				player.vely = -JUMP_SPEED;
+				player.flags &= ~CAN_JET;
+				if (player.flags & HFLIP) {
+					muzzle_spawn(center.x + 8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+				} else {
+					muzzle_spawn(center.x + -8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
+				}
+			}
+			if (key_released(KEY_JUMP) && player.vely < 0) {
+				player.vely /= 2;
 			}
 		}
-		if (key_released(KEY_JUMP) && player.vely < 0) {
-			player.vely /= 2;
+		if (player.player_state != STATE_NOSHIELD) {
+			shield_update();
 		}
-	}
-	if (player.player_state != STATE_NOSHIELD) {
-		shield_update();
-	}
-	
-	
-	if (on_floor) {
-		// if (player.player_anim == JUMP_UP_START || player.player_anim == JUMP_UP_LOOP) {
-		// }
-		if (player.velx == 0) {
-			player_set_anim(IDLE);
+		
+		int hit_side = collide_right | collide_left;
+		int hit_any = hit_side | collide_down;
+		
+		int hit_spike = player.player_state == STATE_NOSHIELD
+		                && (
+							(hit_side & CELL_SPIKE)
+							|| ((collide_down & CELL_SPIKE) && !(collide_down & CELL_SOLID))
+						);
+		
+		if (hit_spike) {
+			player_set_anim(DEAD);
+			player.vely = -Fix(4);
+			shake_timer = 20;
+			death_pos = get_center(&player);
+			cam_pos = death_pos;
+			respawn_timer = 50;
 		} else {
-			player_set_anim(WALK);
+			if (on_floor) {
+				if (player.velx == 0) {
+					player_set_anim(IDLE);
+				} else {
+					player_set_anim(WALK);
+				}
+			} else {
+				if (player.vely > 0) {
+					player_set_anim(FALL);
+				} else {
+					switch (player.player_anim) {
+						case IDLE:
+						case WALK:
+							player_set_anim(JUMP_UP_START);
+							break;
+						case JUMP_UP_START:
+							if (anim_finished(&player)) {
+								player_set_anim(JUMP_UP_LOOP);
+							}
+							break;
+					}	
+				}
+			}
+			
+			bool hit_x = entity_move_x(&player, player.velx);
+			bool hit_y = entity_move_y(&player, player.vely);
+			
+			if (hit_y) {
+				player.vely = 0;
+				player.y = fxceil(player.y);
+				if (map_collide(&player)) {
+					player.y -= FIX_ONE;
+				}
+			}
+			
+			if (player.x > Fix(LEVEL_WIDTH_PX)) {
+				player.x -= Fix(LEVEL_WIDTH_PX);
+			} else if (player.x < 0) {
+				player.x += Fix(LEVEL_WIDTH_PX);
+			}
+			if (player.y > Fix(LEVEL_HEIGHT_PX)) {
+				player.y -= Fix(LEVEL_HEIGHT_PX);
+			} else if (player.y < 0) {
+				player.y += Fix(LEVEL_HEIGHT_PX);
+			}
+			
+			cam_pos = get_center(&player);
 		}
-	} else {
-		if (player.vely > 0) {
-			player_set_anim(FALL);
-		} else {
-			switch (player.player_anim) {
-				case IDLE:
-				case WALK:
-					player_set_anim(JUMP_UP_START);
-					break;
-				case JUMP_UP_START:
-					if (anim_finished(&player)) {
-						player_set_anim(JUMP_UP_LOOP);
-					}
-					break;
-			}	
-		}
 	}
-	
-	bool hit_x = entity_move_x(&player, player.velx);
-	bool hit_y = entity_move_y(&player, player.vely);
-	
-	if (hit_y) {
-		player.vely = 0;
-		player.y = fxceil(player.y);
-		if (map_collide(&player)) {
-			player.y -= FIX_ONE;
-		}
-	}
-	
-	if (player.x > Fix(LEVEL_WIDTH_PX)) {
-		player.x -= Fix(LEVEL_WIDTH_PX);
-	} else if (player.x < 0) {
-		player.x += Fix(LEVEL_WIDTH_PX);
-	}
-	if (player.y > Fix(LEVEL_HEIGHT_PX)) {
-		player.y -= Fix(LEVEL_HEIGHT_PX);
-	} else if (player.y < 0) {
-		player.y += Fix(LEVEL_HEIGHT_PX);
-	}
-	
-	int px = player.x >> FIX_SHIFT;
-	int py = player.y >> FIX_SHIFT;
-	
-	vec2 cam_pos = get_center(&player);
 	
 	if (shake_timer > 0) {
 		shake_timer--;
@@ -236,6 +274,9 @@ void player_update(void) {
 	
 	parallax_x += CLAMP(player.x - start_x, -FIX_ONE, FIX_ONE) / 8;
 	parallax_y += CLAMP(player.y - start_y, -FIX_ONE, FIX_ONE) / 8;
+	
+	int px = player.x >> FIX_SHIFT;
+	int py = player.y >> FIX_SHIFT;
 	
 	obj_set_attr(&obj_mem[reserve_obj()],
 		((py - scrolly - 5) & ATTR0_Y_MASK) | ATTR0_SQUARE,

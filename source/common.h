@@ -214,6 +214,8 @@ def int parallax_x, parallax_y;
 #define MUZZLE_COUNT 4
 #define BULLET_COUNT 8
 #define BREAKABLE_COUNT 20
+#define GEM_COUNT 3
+
 
 // entity declarations
 
@@ -224,6 +226,10 @@ def entity_t bullets[BULLET_COUNT];
 def entity_t muzzles[MUZZLE_COUNT];
 def entity_t zombies[ZOMBIE_COUNT];
 def entity_t breakables[BREAKABLE_COUNT];
+def entity_t gems[GEM_COUNT];
+
+// for respawning only?
+def int spawn_x, spawn_y;
 
 def int shake_timer;
 def int shake_x;
@@ -237,7 +243,8 @@ def int aff_rotate_270;
 
 
 void dialog_init(void);
-void dialog_say(char *str);
+void dialog_say(const char *str, int duration, int x);
+void dialog_say_next(const char *str, int duration, int x);
 void dialog_update(void);
 
 uint label_init(entity_t *label, const TFont *font, uint ink, uint shadow, uint tid, uint obj_count);
@@ -268,12 +275,16 @@ void breakables_update(void);
 uint altars_init(uint tid);
 void altars_update(void);
 
+uint gems_init(uint tid);
+void gems_update(void);
+
 entity_t *zombie_spawn(int x, int y);
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
 entity_t *muzzle_spawn_impact(int x, int y, int dir);
 entity_t *shield_spawn(int x, int y);
 entity_t *bullet_spawn(int x, int y, int dir);
 entity_t *breakable_spawn(int x, int y);
+entity_t *gem_spawn(int x, int y);
 
 void altargun_spawn(int x, int y);
 void altarshield_spawn(int x, int y);

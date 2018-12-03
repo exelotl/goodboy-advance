@@ -14,7 +14,7 @@ uint bullets_init(uint tid) {
 	for (int i=0; i<BULLET_COUNT; i++)
 		bullets[i] = (entity_t){
 			.w = 6,
-			.h = 8,
+			.h = 10,
 		};
 		
 	return tid + 4 * 1;  // 4 frames
@@ -31,7 +31,7 @@ entity_t *bullet_spawn(int x, int y, int dir) {
 	if (e) {
 		e->flags = ACTIVE;
 		e->velx = dir > 0 ? BULLET_SPEED : -BULLET_SPEED,
-		set_center(e, (vec2){x, y-4});
+		set_center(e, (vec2){x, y});
 		set_anim(e, &AnimBullet);
 	}
 	return e;
