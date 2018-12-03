@@ -51,6 +51,9 @@ SPRITE_32x64="$SPRITE_8x8 -Mw 4 -Mh 8"
 
 grit $ASSETS/BgTalkie.png $BG4_OPTIONS
 grit $ASSETS/BgPlanet.png $BG4_OPTIONS
+grit $ASSETS/BgIntro1.png $BG_OPTIONS
+grit $ASSETS/BgIntro2.png $BG_OPTIONS
+grit $ASSETS/BgPlanet.png $BG4_OPTIONS
 grit $ASSETS/levels/Level1.png $BG_OPTIONS
 grit $ASSETS/levels/Level2.png $BG_OPTIONS
 

@@ -29,7 +29,7 @@ static bool jetpack_taken;
 
 static int rocket_dialog_timer;
 
-#define ROCKET_DIALOG_COOLDOWN (8 * 60)
+#define ROCKET_DIALOG_COOLDOWN (10 * 60)
 
 uint altars_init(uint tid) {
 	
@@ -39,7 +39,8 @@ uint altars_init(uint tid) {
 		.h = 100,
 	};
 	
-	rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
+	// rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
+	rocket_dialog_timer = 0;
 	
 	// collision triggers
 	altar_gun = (entity_t) {
@@ -73,6 +74,8 @@ uint altars_init(uint tid) {
 	
 	// dma3_cpy(&tile_mem_obj[0][barrier_tid], SprBarrierTiles, SprBarrierTilesLen);
 	
+	gems_deposited = 3;
+	
 	return tid;
 }
 
@@ -82,7 +85,27 @@ void rocket_spawn(int x, int y) {
 	rocket.y = y;
 }
 
+static void level_complete_fadeout(void);
+static void level_complete_wait(void);
+static void level_complete_set_scene(void);
+
+static void level_complete_fadeout(void) {
+	fader_fade_out(1, level_complete_wait);
+}
+static void level_complete_wait(void) {
+	timeout_set(10, level_complete_set_scene);
+}
+static void level_complete_set_scene(void) {
+	slide_number = 2;
+	scene_set(title_scene);
+}
+
 static void rocket_update() {
+	
+	if (rocket_dialog_timer > 0) {
+		rocket_dialog_timer--;
+	}
+	
 	if (entity_collide(&player, &rocket)) {
 		
 		if (player.player_state != STATE_ALL) {
@@ -105,9 +128,7 @@ static void rocket_update() {
 		
 		// say appropriate dialog line, if enough time has passed
 		
-		if (rocket_dialog_timer > 0) {
-			rocket_dialog_timer--;
-		} else {
+		if (rocket_dialog_timer <= 0) {
 			rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
 			switch (gems_deposited) {
 				case 0:
@@ -122,6 +143,7 @@ static void rocket_update() {
 				case 3:
 					dialog_say("Oh woof. I've done it.", 160, Fix(40));
 					dialog_say_next("I am a good boy.", 160, Fix(70));
+					timeout_set(160*2 + 30, level_complete_fadeout);
 					break;
 				default:
 					dialog_say("???", 160, Fix(80));
@@ -243,7 +265,7 @@ void altars_update() {
 		barrier_set_cells(barrier_shield.x, barrier_shield.y, CELL_SOLID);
 		spawn_x = icon.x + Fix(4);
 		spawn_y = icon.y - Fix(4);
-		dialog_say("So dangerous without a shield.", 160, Fix(50));
+		dialog_say("So dangerous without a shield.", 160, Fix(30));
 	}
 	
 	int px = (icon.x >> FIX_SHIFT) - scrollx;

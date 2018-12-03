@@ -81,8 +81,13 @@ void gems_update(void) {
 					continue;
 				}
 				
-				e->x += SGN3(rocket.x - e->x) * Fix(0.5);
-				e->y += SGN3(rocket.y - e->y) * Fix(0.5);
+				vec2 rocket_center = get_center(&rocket);
+				vec2 self_center = get_center(e);
+				int dx = rocket_center.x - self_center.x;
+				int dy = rocket_center.y - self_center.y;
+				self_center.x += SGN3(dx) * Fix(0.5);
+				self_center.y += SGN3(dx) * Fix(0.5);
+				
 				break;
 			case GEM_DEPOSITED:
 				entity_deactivate(e);

@@ -32,8 +32,11 @@ int main(void) {
 	aff_rotate_270 = reserve_aff_perm();
 	obj_aff_rotate(&obj_aff_mem[aff_rotate_270], ANGLE(270));
 	
-	// scene_set(title_scene);
-	scene_set(game_scene);
+	timeout_clear();
+	
+	scene_set(title_scene);
+	// scene_set(fake_end_scene);
+	// scene_set(game_scene);
 	
 	while (1) {
 		
@@ -46,6 +49,7 @@ int main(void) {
 		scene_update();
 		oam_update(); // clear unused entries, reset allocation counters
 		
+		timeout_update();
 		global_tick++;
 	}
 }

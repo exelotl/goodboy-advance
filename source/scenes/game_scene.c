@@ -39,6 +39,8 @@ const int planet_cb = 2;      // tile gfx
 const int planet_sb = 22;     // entries
 
 
+static void say_initial_dialog(void);
+
 static void show(void) {
 				
 	scrollx = 0;
@@ -51,12 +53,12 @@ static void show(void) {
 	}
 	
 	// LEVEL
-	dma3_cpy(pal_bg_bank[level_palbank], level->pal, level->palLen);
+	dma3_cpy(pal_bg_target_bank[level_palbank], level->pal, level->palLen);
 	dma3_cpy(&tile_mem[level_cb], level->tiles, level->tilesLen);
 	dma3_cpy(&se_mem[level_sb], level->map, level->mapLen);
 	
 	// TALKIE
-	dma3_cpy(pal_bg_bank[talkie_palbank], BgTalkiePal, BgTalkiePalLen);
+	dma3_cpy(pal_bg_target_bank[talkie_palbank], BgTalkiePal, BgTalkiePalLen);
 	dma3_cpy(&tile_mem[talkie_cb], BgTalkieTiles, BgTalkieTilesLen);
 	dma3_cpy(&se_mem[talkie_sb], BgTalkieMap, BgTalkieMapLen);
 	for (int i=0; i<sb_size_short; i++) {
@@ -64,14 +66,14 @@ static void show(void) {
 	}
 	
 	// PLANET
-	dma3_cpy(pal_bg_bank[planet_palbank], BgPlanetPal, BgPlanetPalLen);
+	dma3_cpy(pal_bg_target_bank[planet_palbank], BgPlanetPal, BgPlanetPalLen);
 	dma3_cpy(&tile_mem[planet_cb], BgPlanetTiles, BgPlanetTilesLen);
 	dma3_cpy(&se_mem[planet_sb], BgPlanetMap, BgPlanetMapLen);
 	for (int i=0; i<sb_size_short; i++) {
 		se_mem[planet_sb][i] |= SE_PALBANK(planet_palbank);
 	}
 	
-	pal_bg_mem[0] = RGB15(23,27,30);
+	pal_bg_target_mem[0] = RGB15(23,27,30);
 	
 	REG_DISPCNT = DCNT_MODE1 // 2 regular, 1 affine
 				| DCNT_BG0
@@ -91,21 +93,21 @@ static void show(void) {
 	// REG_BG_AFFINE[2] = bg_aff_default;
 	
 	// set up sprite palettes
-	dma3_cpy(&pal_obj_bank[0], SprPlayerPal, SprPlayerPalLen);
-	dma3_cpy(&pal_obj_bank[1], SprMuzzlePal, SprMuzzlePalLen);
-	dma3_cpy(&pal_obj_bank[2], SprShieldPal, SprShieldPalLen);
-	dma3_cpy(&pal_obj_bank[3], SprBulletPal, SprBulletPalLen);
-	dma3_cpy(&pal_obj_bank[4], SprBreakablePal, SprBreakablePalLen);
-	dma3_cpy(&pal_obj_bank[5], SprBarrierPal, SprBarrierPalLen);
-	dma3_cpy(&pal_obj_bank[6], SprSacrificedItemsPal, SprSacrificedItemsPalLen);
-	dma3_cpy(&pal_obj_bank[7], SprGemPal, SprGemPalLen);
-	// dma3_cpy(&pal_obj_bank[1], SprShared1Pal, SprShared1PalLen);
+	dma3_cpy(&pal_obj_target_bank[0], SprPlayerPal, SprPlayerPalLen);
+	dma3_cpy(&pal_obj_target_bank[1], SprMuzzlePal, SprMuzzlePalLen);
+	dma3_cpy(&pal_obj_target_bank[2], SprShieldPal, SprShieldPalLen);
+	dma3_cpy(&pal_obj_target_bank[3], SprBulletPal, SprBulletPalLen);
+	dma3_cpy(&pal_obj_target_bank[4], SprBreakablePal, SprBreakablePalLen);
+	dma3_cpy(&pal_obj_target_bank[5], SprBarrierPal, SprBarrierPalLen);
+	dma3_cpy(&pal_obj_target_bank[6], SprSacrificedItemsPal, SprSacrificedItemsPalLen);
+	dma3_cpy(&pal_obj_target_bank[7], SprGemPal, SprGemPalLen);
+	// dma3_cpy(&pal_obj_target_bank[1], SprShared1Pal, SprShared1PalLen);
 	
 	// text palette
-	pal_obj_bank[8][0] = CLR_SKYBLUE;
-	pal_obj_bank[8][1] = CLR_WHITE;
-	pal_obj_bank[8][2] = CLR_BLACK;
-	pal_obj_bank[8][3] = RGB15(16,16,16); // for greyed-out text
+	pal_obj_target_bank[8][0] = CLR_SKYBLUE;
+	pal_obj_target_bank[8][1] = CLR_WHITE;
+	pal_obj_target_bank[8][2] = CLR_BLACK;
+	pal_obj_target_bank[8][3] = RGB15(16,16,16); // for greyed-out text
 	
 	// reserve sprite tiles in VRAM
 	uint tid = 0;
@@ -120,14 +122,8 @@ static void show(void) {
 	
 	dialog_init();
 	
-	if (level == &Level1) {
-		dialog_say("My poor rocket.", 160, Fix(70));
-		dialog_say_next("It needs some power gems.", 160, Fix(40));
-	}
-	if (level == &Level2) {
-		dialog_say("Oh no, I crashed again.", 160, Fix(50));
-		dialog_say_next("Need more gems.", 160, Fix(70));
-	}
+	timeout_clear();
+	timeout_set(30, say_initial_dialog);
 	
 	// label_begin_write(&label_dialog);
 	// tte_write("Darn... looks like my ship has crashed.");
@@ -136,6 +132,26 @@ static void show(void) {
 	// mmStart(MOD_SPACECAT, MM_PLAY_LOOP);
 	
 	spawn_all(level);
+	
+	fader_init();  // copies all the palettes assuming they won't change from now on.
+	fader_fade_in(1, NULL);
+	// fader_fade_out(1, NULL);
+	
+	
+	// initial screenshake and sfx
+	shake_timer = 50;
+}
+
+
+static void say_initial_dialog(void) {
+	if (level == &Level1) {
+		dialog_say("My poor rocket.", 160, Fix(70));
+		dialog_say_next("It needs some power gems.", 160, Fix(40));
+	}
+	if (level == &Level2) {
+		dialog_say("Oh no, I crashed again.", 160, Fix(50));
+		dialog_say_next("Need more gems.", 160, Fix(70));
+	}
 }
 
 static void hide(void) {
@@ -154,6 +170,8 @@ static void update(void) {
 	//// shield_update();  // player is responsible for updating shield
 	
 	dialog_update();
+	
+	fader_update();
 	
 	uint ofs_x = (uint) scrollx;
 	uint ofs_y = (uint) scrolly;

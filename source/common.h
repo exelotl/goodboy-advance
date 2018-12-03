@@ -19,7 +19,9 @@ typedef struct scene_t {
 void scene_set(scene_t scene);
 void scene_update();
 
-def const scene_t title_scene, game_scene;
+extern const scene_t title_scene, game_scene, fake_end_scene;
+
+extern int slide_number;  // which image to display on title screen
 
 #define CELL_SIZE 16
 #define CELL_SHIFT 4
@@ -38,6 +40,32 @@ def const scene_t title_scene, game_scene;
 #define CELL_SOLID  0x0001
 #define CELL_ONEWAY 0x0002
 #define CELL_SPIKE  0x0004
+
+
+typedef void (*callback_t)(void);
+
+// general purpose timeout  (only one fn at a time, for now)
+def callback_t timeout_cb;
+def int timeout_counter;
+
+inline void timeout_clear() {
+	timeout_cb = NULL;
+	timeout_counter = 0;
+}
+inline void timeout_set(int t, callback_t cb) {
+	timeout_cb = cb;
+	timeout_counter = t;
+}
+inline void timeout_update() {
+	if (timeout_counter > 0) {
+		if (--timeout_counter == 0) {
+			if (timeout_cb) {
+				timeout_cb();
+			}
+		}
+	}
+}
+
 
 typedef struct spawninfo_t {
 	int type, x, y;
@@ -68,7 +96,6 @@ typedef struct vec2 {
 
 #define ACTIVE 0x0001  // does this entity exist in the world?
 #define CAN_JET 0x0002
-#define GEM_TAKEN
 #define HFLIP 0x1000   // same as ATTR1_HFLIP
 #define VFLIP 0x2000   // same as ATTR1_VFLIP
 
@@ -316,6 +343,20 @@ int reserve_aff(void);
 int reserve_aff_perm(void);
 void oam_update(void);
 
+// fades
+void fader_init(void);
+void fader_update(void);
+void fader_fade_out(int spd, callback_t cb);
+void fader_fade_in(int spd, callback_t cb);
+
+#define PALBANK_NUM_COLORS (PAL_BG_SIZE/sizeof(COLOR))
+def EWRAM_DATA COLOR pal_bg_target[PALBANK_NUM_COLORS];
+def EWRAM_DATA COLOR pal_obj_target[PALBANK_NUM_COLORS];
+
+#define pal_bg_target_mem (pal_bg_target)
+#define pal_obj_target_mem (pal_obj_target)
+#define pal_bg_target_bank ((PALBANK*)pal_bg_target)
+#define pal_obj_target_bank ((PALBANK*)pal_obj_target)
 
 // debugging utilities
 
