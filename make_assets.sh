@@ -54,6 +54,13 @@ grit $ASSETS/BgPlanet.png $BG4_OPTIONS
 grit $ASSETS/BgTitle.png $BG_OPTIONS
 grit $ASSETS/BgIntro1.png $BG_OPTIONS
 grit $ASSETS/BgIntro2.png $BG_OPTIONS
+grit $ASSETS/BgEndAll.png $BG_OPTIONS
+# grit $ASSETS/BgEndBackground.png \
+# 	$ASSETS/BgEndForeground.png \
+# 	$ASSETS/BgThanks.png \
+# 	-O BgEndShared $BG4_OPTIONS -pS -gS
+# grit $ASSETS/BgEndForeground.png $BG4_OPTIONS
+# grit $ASSETS/BgThanks.png $BG4_OPTIONS
 grit $ASSETS/BgPlanet.png $BG4_OPTIONS
 grit $ASSETS/levels/Level1.png $BG_OPTIONS
 grit $ASSETS/levels/Level2.png $BG_OPTIONS

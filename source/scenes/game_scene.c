@@ -22,21 +22,21 @@ static int cells[LEVEL_CELL_COUNT];
 // cb = where to store the tile gfx
 // sb = where to store the map entries
 
-const int sb_size = sizeof(SCREENBLOCK);
-const int sb_size_short = sizeof(SCREENBLOCK) / 2;
+static const int sb_size = sizeof(SCREENBLOCK);
+static const int sb_size_short = sizeof(SCREENBLOCK) / 2;
 
-const int level_palbank = 0;
-const int level_cb = 0;      // tile gfx
-const int level_sb = 24;     // entries
+static const int level_palbank = 0;
+static const int level_cb = 0;      // tile gfx
+static const int level_sb = 24;     // entries
 
 // TODO figure out why talkie aint talkin
-const int talkie_palbank = 2;
-const int talkie_cb = 2;      // tile gfx
-const int talkie_sb = 20;     // entries
+static const int talkie_palbank = 2;
+static const int talkie_cb = 2;      // tile gfx
+static const int talkie_sb = 20;     // entries
 
-const int planet_palbank = 3;
-const int planet_cb = 2;      // tile gfx
-const int planet_sb = 22;     // entries
+static const int planet_palbank = 3;
+static const int planet_cb = 2;      // tile gfx
+static const int planet_sb = 22;     // entries
 
 
 static void say_initial_dialog(void);
@@ -75,7 +75,7 @@ static void show(void) {
 	
 	pal_bg_target_mem[0] = RGB15(23,27,30);
 	
-	REG_DISPCNT = DCNT_MODE1 // 2 regular, 1 affine
+	REG_DISPCNT = DCNT_MODE0
 				| DCNT_BG0
 				| DCNT_BG1
 				// | DCNT_BG2

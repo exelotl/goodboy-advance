@@ -40,8 +40,12 @@ uint altars_init(uint tid) {
 		.h = 100,
 	};
 	
-	// rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
-	rocket_dialog_timer = 0;
+	rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
+	
+	/// instawin cheat
+	// rocket_dialog_timer = 0;
+	// gems_deposited = 3;
+	
 	
 	// collision triggers
 	altar_gun = (entity_t) {
@@ -74,9 +78,7 @@ uint altars_init(uint tid) {
 	icon.tid = tid;             tid += (4*4);
 	
 	// dma3_cpy(&tile_mem_obj[0][barrier_tid], SprBarrierTiles, SprBarrierTilesLen);
-	
-	gems_deposited = 3;
-	
+		
 	return tid;
 }
 
