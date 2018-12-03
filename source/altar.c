@@ -14,8 +14,6 @@ entity_t altar_gun, altar_shield, altar_jetpack;
 entity_t barrier_gun, barrier_shield, barrier_jetpack;
 entity_t icon;
 
-entity_t rocket;
-
 static const anim_t AnimBarrierOpen = { .speed = 3, .loop = 0, .len = 1, .frames = (int[]){0} };
 static const anim_t AnimBarrier = { .speed = 3, .loop = 0, .len = 10, .frames = (int[]){0,1,2,3,4,5,6,7,8,9} };
 
@@ -29,6 +27,10 @@ static bool jetpack_taken;
 
 // static int barrier_tid;
 
+static int rocket_dialog_timer;
+
+#define ROCKET_DIALOG_COOLDOWN (8 * 60)
+
 uint altars_init(uint tid) {
 	
 	rocket = (entity_t) {
@@ -36,6 +38,8 @@ uint altars_init(uint tid) {
 		.w = 100,
 		.h = 100,
 	};
+	
+	rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
 	
 	// collision triggers
 	altar_gun = (entity_t) {
@@ -79,11 +83,53 @@ void rocket_spawn(int x, int y) {
 }
 
 static void rocket_update() {
-	if (player.player_state != STATE_ALL && entity_collide(&player, &rocket)) {
-		player.player_state = STATE_ALL;
-		//TODO
-		// add gems?
+	if (entity_collide(&player, &rocket)) {
+		
+		if (player.player_state != STATE_ALL) {
+			player.player_state = STATE_ALL;
+			entity_deactivate(&icon);
+		}
+		
+		// check for any undeposited gems and deposit them
+		
+		for (int i = 0; i < GEM_COUNT; i++) {
+			entity_t *gem = &gems[i];
+			if (!gem->flags & ACTIVE) continue;
+			if (gem->gem_state == GEM_TAKEN) {
+				gem->x = player.x;
+				gem->y = player.y;
+				gem->gem_state = GEM_DEPOSITING;
+				gems_deposited++;
+			}
+		}
+		
+		// say appropriate dialog line, if enough time has passed
+		
+		if (rocket_dialog_timer > 0) {
+			rocket_dialog_timer--;
+		} else {
+			rocket_dialog_timer = ROCKET_DIALOG_COOLDOWN;
+			switch (gems_deposited) {
+				case 0:
+					dialog_say("I still need 3 power gems.", 160, Fix(40));
+					break;
+				case 1:
+					dialog_say("Another 2 power gems to go.", 160, Fix(40));
+					break;
+				case 2:
+					dialog_say("One more power gem left.", 160, Fix(40));
+					break;
+				case 3:
+					dialog_say("Oh woof. I've done it.", 160, Fix(40));
+					dialog_say_next("I am a good boy.", 160, Fix(70));
+					break;
+				default:
+					dialog_say("???", 160, Fix(80));
+					break;
+			}
+		}
 	}
+	
 }
 
 

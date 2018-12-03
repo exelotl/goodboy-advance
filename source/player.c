@@ -72,9 +72,11 @@ static void player_set_anim(int anim_index) {
 #define KEY_JUMP (KEY_A)
 #define KEY_SHOOT (KEY_B)
 
-static const int SPEED = (int)(2.0f * (FIX_SCALE));
+// static const int SPEED = (int)(2.0f * (FIX_SCALE));
+static const int SPEED = (int)(4.0f * (FIX_SCALE));
 static const int GRAVITY = (int)(0.2f * (FIX_SCALE));
-static const int JUMP_SPEED = (int)(4.25f * (FIX_SCALE));
+static const int JUMP_SPEED = (int)(4.4f * (FIX_SCALE));
+static const int HOP_SPEED = (int)(1.75f * (FIX_SCALE));
 
 int prev_state;
 
@@ -178,7 +180,6 @@ void player_update(void) {
 		}
 		
 		if (player.player_state != STATE_NOJET) {
-			// if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
 			if (key_hit(KEY_JUMP) && (player.flags & CAN_JET)) {
 				player.vely = -JUMP_SPEED;
 				player.flags &= ~CAN_JET;
@@ -190,6 +191,10 @@ void player_update(void) {
 			}
 			if (key_released(KEY_JUMP) && player.vely < 0) {
 				player.vely /= 2;
+			}
+		} else {
+			if (key_hit(KEY_JUMP) && map_collide_at(&player, 0, FIX_ONE)) {
+				player.vely = -HOP_SPEED;
 			}
 		}
 		if (player.player_state != STATE_NOSHIELD) {

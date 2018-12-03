@@ -40,10 +40,6 @@ void label_begin_write(entity_t *label) {
 	tte_set_shadow(label->shadow);
 }
 
-void label_update_all(void) {
-	label_update(&label_dialog);
-}
-
 void label_update(entity_t *label) {
 	
 	if (!is_active(label)) return;

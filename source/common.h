@@ -68,6 +68,7 @@ typedef struct vec2 {
 
 #define ACTIVE 0x0001  // does this entity exist in the world?
 #define CAN_JET 0x0002
+#define GEM_TAKEN
 #define HFLIP 0x1000   // same as ATTR1_HFLIP
 #define VFLIP 0x2000   // same as ATTR1_VFLIP
 
@@ -119,6 +120,10 @@ typedef struct entity_t {
 		};
 		struct {
 			bool icon_active;
+		};
+		struct {
+			int gem_state;
+			int gem_timer;
 		};
 		// unused
 		struct {
@@ -220,6 +225,7 @@ def int parallax_x, parallax_y;
 // entity declarations
 
 def entity_t player;
+def entity_t rocket; // for collision tests, updated in altar.c?
 def entity_t shield;
 def entity_t label_dialog;
 def entity_t bullets[BULLET_COUNT];
@@ -227,6 +233,13 @@ def entity_t muzzles[MUZZLE_COUNT];
 def entity_t zombies[ZOMBIE_COUNT];
 def entity_t breakables[BREAKABLE_COUNT];
 def entity_t gems[GEM_COUNT];
+
+// gem states
+#define GEM_AVAILABLE 0
+#define GEM_DISAPPEARING 1
+#define GEM_TAKEN 2
+#define GEM_DEPOSITING 3
+#define GEM_DEPOSITED 4
 
 // for respawning only?
 def int spawn_x, spawn_y;
@@ -237,6 +250,8 @@ def int shake_y;
 
 def int dialog_has_input;
 def int dialog_visible;
+
+def int gems_deposited;
 
 // reserved affine indices
 def int aff_rotate_270;
