@@ -45,6 +45,7 @@ uint altars_init(uint tid) {
 	/// instawin cheat
 	// rocket_dialog_timer = 0;
 	// gems_deposited = 3;
+	gems_deposited = 0;
 	
 	// collision triggers
 	altar_gun = (entity_t) {
@@ -269,6 +270,11 @@ void altars_update() {
 		spawn_x = icon.x + Fix(4);
 		spawn_y = icon.y - Fix(4);
 		dialog_say("I sacrificed my blaster.", 160, Fix(50));
+		if (level == &Level1) {
+			mmStart(MOD_SPACEHAMSTER, MM_PLAY_LOOP);
+		} else {
+			mmStart(MOD_SPACEHAMSTER4, MM_PLAY_LOOP);
+		}
 	}
 	
 	// if ((altar_jetpack.flags & ACTIVE) && entity_collide(&altar_jetpack, &player)) {
@@ -285,6 +291,11 @@ void altars_update() {
 		spawn_y = icon.y - Fix(4);
 		dialog_say("I sacrificed my jetpack.", 160, Fix(50));
 		dialog_say("Now I can't jump!", 160, Fix(60));
+		if (level == &Level1) {
+			mmStart(MOD_SPACEHAMSTER3, MM_PLAY_LOOP);
+		} else {
+			mmStart(MOD_SPACEHAMSTER6, MM_PLAY_LOOP);
+		}
 	}
 	
 	if ((altar_shield.flags & ACTIVE) && player.player_state == STATE_ALL && entity_collide(&altar_shield, &player)) {
@@ -300,6 +311,11 @@ void altars_update() {
 		spawn_x = icon.x + Fix(4);
 		spawn_y = icon.y - Fix(4);
 		dialog_say("So dangerous without a shield.", 160, Fix(30));
+		if (level == &Level1) {
+			mmStart(MOD_SPACEHAMSTER2, MM_PLAY_LOOP);
+		} else {
+			mmStart(MOD_SPACEHAMSTER5, MM_PLAY_LOOP);
+		}
 	}
 	
 	int px = (icon.x >> FIX_SHIFT) - scrollx;

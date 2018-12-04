@@ -53,6 +53,7 @@ static void show(void) {
 	switch (slide_number) {
 		case 0:
 			SetImage(BgTitle);
+			mmStart(MOD_SPACEDOG, MM_PLAY_LOOP);
 			break;
 		case 1:
 			SetImage(BgIntro1);
@@ -120,7 +121,7 @@ static void show(void) {
 }
 
 static void hide(void) {
-	mmStop();
+	// mmStop();
 }
 
 static void play_level_1(void) {

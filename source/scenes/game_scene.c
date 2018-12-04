@@ -137,6 +137,7 @@ static void show(void) {
 	fader_fade_in(1, NULL);
 	// fader_fade_out(1, NULL);
 	
+	mmStop();
 	
 	// initial screenshake and sfx
 	shake_timer = 50;
@@ -155,7 +156,7 @@ static void say_initial_dialog(void) {
 }
 
 static void hide(void) {
-	
+	mmStop();
 }
 
 

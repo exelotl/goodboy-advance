@@ -104,6 +104,7 @@ static void show(void) {
 	fader_init();  // copies all the palettes assuming they won't change from now on.
 	fader_fade_in(1, NULL);
 	
+	mmStart(MOD_SPACECAT, MM_PLAY_LOOP);
 }
 
 static void hide(void) {
