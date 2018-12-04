@@ -72,8 +72,8 @@ static void player_set_anim(int anim_index) {
 #define KEY_JUMP (KEY_A)
 #define KEY_SHOOT (KEY_B)
 
-// static const int SPEED = (int)(2.0f * (FIX_SCALE));
-static const int SPEED = (int)(4.0f * (FIX_SCALE));
+static const int SPEED = (int)(2.0f * (FIX_SCALE));
+// static const int SPEED = (int)(4.0f * (FIX_SCALE));
 static const int GRAVITY = (int)(0.2f * (FIX_SCALE));
 static const int JUMP_SPEED = (int)(4.4f * (FIX_SCALE));
 static const int HOP_SPEED = (int)(1.75f * (FIX_SCALE));

@@ -15,7 +15,7 @@ entity_t altar_gun, altar_shield, altar_jetpack;
 entity_t barrier_gun, barrier_shield, barrier_jetpack;
 entity_t icon;
 
-static const anim_t AnimBarrierOpen = { .speed = 3, .loop = 0, .len = 1, .frames = (int[]){0} };
+static const anim_t AnimBarrierOpen = { .speed = 3, .loop = 1, .len = 1, .frames = (int[]){0} };
 static const anim_t AnimBarrier = { .speed = 3, .loop = 0, .len = 10, .frames = (int[]){0,1,2,3,4,5,6,7,8,9} };
 
 static const anim_t AnimSacrificeShield = { .speed = 3, .loop = 1, .len = 8, .frames = (int[]){0,1,2,3,4,5,6,7} };
@@ -45,7 +45,6 @@ uint altars_init(uint tid) {
 	/// instawin cheat
 	// rocket_dialog_timer = 0;
 	// gems_deposited = 3;
-	
 	
 	// collision triggers
 	altar_gun = (entity_t) {
@@ -107,6 +106,8 @@ static void level_complete_set_scene(void) {
 	}
 }
 
+extern void barrier_open(entity_t *barrier);
+
 static void rocket_update() {
 	
 	if (rocket_dialog_timer > 0) {
@@ -115,12 +116,9 @@ static void rocket_update() {
 	
 	if (entity_collide(&player, &rocket)) {
 		
-		if (player.player_state != STATE_ALL) {
-			player.player_state = STATE_ALL;
-			entity_deactivate(&icon);
-		}
-		
 		// check for any undeposited gems and deposit them
+		
+		bool found_gem = false;
 		
 		for (int i = 0; i < GEM_COUNT; i++) {
 			entity_t *gem = &gems[i];
@@ -130,7 +128,31 @@ static void rocket_update() {
 				gem->y = player.y;
 				gem->gem_state = GEM_DEPOSITING;
 				gems_deposited++;
+				found_gem = true;
 			}
+		}
+		
+		
+		if (player.player_state != STATE_ALL) {
+			
+			// reopen door if player missed gem
+			if (!found_gem) {
+				if (player.player_state == STATE_NOGUN) {
+					barrier_open(&barrier_gun);
+					altar_gun.flags |= ACTIVE;
+				}
+				if (player.player_state == STATE_NOJET) {
+					barrier_open(&barrier_jetpack);
+					altar_jetpack.flags |= ACTIVE;
+				}
+				if (player.player_state == STATE_NOSHIELD) {
+					barrier_open(&barrier_shield);
+					altar_shield.flags |= ACTIVE;
+				}
+			}
+			
+			player.player_state = STATE_ALL;
+			entity_deactivate(&icon);
 		}
 		
 		// say appropriate dialog line, if enough time has passed
@@ -184,7 +206,6 @@ void altarjetpack_spawn(int x, int y) {
 void update_barrier(entity_t *barrier) {
 	if (!barrier->door_closed) {
 		entity_animate(barrier);
-		int is_closed = anim_finished(barrier);
 		
 		if (barrier->frame == 7) {
 			shake_timer = 30;
@@ -219,6 +240,12 @@ static void barrier_set_cells(int x, int y, int val) {
 			map_set_cell(cell_x+i, cell_y+j, val);
 		}
 	}
+}
+
+void barrier_open(entity_t *barrier) {
+	barrier_set_cells(barrier->x, barrier->y, CELL_EMPTY);
+	set_anim(barrier, &AnimBarrierOpen);
+	barrier->door_closed = false;
 }
 
 void altars_update() {

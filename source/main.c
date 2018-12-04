@@ -34,10 +34,10 @@ int main(void) {
 	
 	timeout_clear();
 	
-	// scene_set(title_scene);
+	scene_set(title_scene);
 	// scene_set(fake_end_scene);
 	// scene_set(game_scene);
-	scene_set(end_scene);
+	// scene_set(end_scene);
 	
 	while (1) {
 		

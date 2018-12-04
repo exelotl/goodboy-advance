@@ -90,7 +90,7 @@ void zombies_update(void) {
 				e->angry = true;
 				e->velx = (e->flags & HFLIP) ? -SPEED_ANGRY : SPEED_ANGRY;
 				SetAnim(e, AnimZombieAngryFall);
-				mmEffect(SFX_ANGRY);
+				// mmEffect(SFX_ANGRY);
 			}
 		}
 		

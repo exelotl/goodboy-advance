@@ -75,7 +75,7 @@ static void show(void) {
 	
 	pal_bg_target_mem[0] = RGB15(23,27,30);
 	
-	REG_DISPCNT = DCNT_MODE0
+	REG_DISPCNT = DCNT_MODE1
 				| DCNT_BG0
 				| DCNT_BG1
 				// | DCNT_BG2
