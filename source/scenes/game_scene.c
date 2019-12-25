@@ -41,6 +41,14 @@ static const int planet_sb = 22;     // entries
 
 static void say_initial_dialog(void);
 
+static const mm_sound_effect snd_crash = {
+	{ SFX_BREAKABLE } ,			// id
+	(int)(0.3f * (1<<10)),	// rate
+	0,		// handle
+	255,	// volume
+	128,	// panning
+};
+
 static void show(void) {
 				
 	scrollx = 0;
@@ -138,6 +146,8 @@ static void show(void) {
 	// fader_fade_out(1, NULL);
 	
 	mmStop();
+	
+	mmEffectEx(&snd_crash);
 	
 	// initial screenshake and sfx
 	shake_timer = 50;

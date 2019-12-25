@@ -53,7 +53,8 @@ void gems_update(void) {
 					e->gem_timer = 60;
 					set_anim(e, &AnimGemCollect);
 					shake_timer = 8;
-					// SFX
+					mmEffect(SFX_GEM);
+					dialog_say("A power gem for my rocket", 160, Fix(40));
 				}
 				break;
 			case GEM_DISAPPEARING:

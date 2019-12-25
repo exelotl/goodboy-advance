@@ -22,6 +22,7 @@ uint bullets_init(uint tid) {
 
 entity_t *bullet_spawn(int x, int y, int dir) {
 	entity_t *e = NULL;
+	shake_timer += 8;
 	for (int i = 0; i < BULLET_COUNT; i++) {
 		if (!is_active(&bullets[i])) {
 			e = &bullets[i];
@@ -63,6 +64,7 @@ void bullets_update(void) {
 			if (fx) {
 				fx->x += (e->velx > 0) ? Fix(-16) : Fix(16);
 			}
+			// mmEffect(SFX_BULLET_HIT);
 		}
 		
 		int x = e->x >> FIX_SHIFT;

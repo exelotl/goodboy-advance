@@ -14,7 +14,7 @@ int main(void) {
 	// add maxmod vblank interrupt handler
 	// initialise maxmod with soundbank and 8 channels
 	irq_add(II_VBLANK, mmVBlank);
-    mmInitDefault((mm_addr)soundbank_bin, 8);
+    mmInitDefault((mm_addr)soundbank_bin, 12);
 		
 	REG_DISPCNT = DCNT_MODE0 // 4 regular backgrounds
 				| DCNT_BG0
@@ -35,8 +35,8 @@ int main(void) {
 	timeout_clear();
 	
 	scene_set(title_scene);
-	// scene_set(fake_end_scene);
 	// scene_set(game_scene);
+	// scene_set(fake_end_scene);
 	// scene_set(end_scene);
 	
 	while (1) {

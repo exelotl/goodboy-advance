@@ -107,6 +107,16 @@ static void level_complete_set_scene(void) {
 	}
 }
 
+			
+static const mm_sound_effect snd_deposit = {
+	{ SFX_GEM } ,			// id
+	(int)(0.3f * (1<<10)),	// rate
+	0,		// handle
+	255,	// volume
+	128,	// panning
+};
+			
+
 extern void barrier_open(entity_t *barrier);
 
 static void rocket_update() {
@@ -133,6 +143,11 @@ static void rocket_update() {
 			}
 		}
 		
+		if (found_gem) {
+			mmEffectEx(&snd_deposit);
+		}
+		
+		const char *secondary_text = NULL;
 		
 		if (player.player_state != STATE_ALL) {
 			
@@ -150,6 +165,16 @@ static void rocket_update() {
 					barrier_open(&barrier_shield);
 					altar_shield.flags |= ACTIVE;
 				}
+			} else {
+				if (player.player_state == STATE_NOGUN) {
+					secondary_text = "My spare Blaster's here.";
+				}
+				if (player.player_state == STATE_NOJET) {
+					secondary_text = "Phew, I can jump again.";
+				}
+				if (player.player_state == STATE_NOSHIELD) {
+					secondary_text = "Found an old shield in my ship.";
+				}
 			}
 			
 			player.player_state = STATE_ALL;
@@ -163,12 +188,15 @@ static void rocket_update() {
 			switch (gems_deposited) {
 				case 0:
 					dialog_say("I still need 3 power gems.", 160, Fix(40));
+					if (secondary_text) dialog_say_next(secondary_text, 160, Fix(40));
 					break;
 				case 1:
 					dialog_say("Another 2 power gems to go.", 160, Fix(40));
+					if (secondary_text) dialog_say_next(secondary_text, 160, Fix(40));
 					break;
 				case 2:
 					dialog_say("One more power gem left.", 160, Fix(40));
+					if (secondary_text) dialog_say_next(secondary_text, 160, Fix(40));
 					break;
 				case 3:
 					dialog_say("Oh woof. I've done it.", 160, Fix(40));
@@ -275,6 +303,7 @@ void altars_update() {
 		} else {
 			mmStart(MOD_SPACEHAMSTER4, MM_PLAY_LOOP);
 		}
+		mmEffect(SFX_ALTAR);
 	}
 	
 	// if ((altar_jetpack.flags & ACTIVE) && entity_collide(&altar_jetpack, &player)) {
@@ -296,6 +325,7 @@ void altars_update() {
 		} else {
 			mmStart(MOD_SPACEHAMSTER6, MM_PLAY_LOOP);
 		}
+		mmEffect(SFX_ALTAR);
 	}
 	
 	if ((altar_shield.flags & ACTIVE) && player.player_state == STATE_ALL && entity_collide(&altar_shield, &player)) {
@@ -316,6 +346,7 @@ void altars_update() {
 		} else {
 			mmStart(MOD_SPACEHAMSTER5, MM_PLAY_LOOP);
 		}
+		mmEffect(SFX_ALTAR);
 	}
 	
 	int px = (icon.x >> FIX_SHIFT) - scrollx;

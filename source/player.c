@@ -169,6 +169,7 @@ void player_update(void) {
 		
 		if (player.player_state != STATE_NOGUN) {
 			if (key_hit(KEY_SHOOT)) {
+				mmEffect(SFX_SHOOT);
 				if (player.flags & HFLIP) {
 					muzzle_spawn(center.x + -30*FIX_SCALE, center.y + 4*FIX_SCALE, 0, HFLIP);
 					bullet_spawn(center.x + -12*FIX_SCALE, center.y + 2*FIX_SCALE, -1);
@@ -183,6 +184,7 @@ void player_update(void) {
 			if (key_hit(KEY_JUMP) && (player.flags & CAN_JET)) {
 				player.vely = -JUMP_SPEED;
 				player.flags &= ~CAN_JET;
+				mmEffect(SFX_JUMP);
 				if (player.flags & HFLIP) {
 					muzzle_spawn(center.x + 8*FIX_SCALE, center.y + 12*FIX_SCALE, ATTR0_AFF, ATTR1_AFF_ID(aff_rotate_270));
 				} else {
@@ -212,6 +214,7 @@ void player_update(void) {
 		
 		if (hit_spike) {
 			player_set_anim(DEAD);
+			mmEffect(SFX_DEAD);
 			player.vely = -Fix(4);
 			shake_timer = 20;
 			death_pos = get_center(&player);

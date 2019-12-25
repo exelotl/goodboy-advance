@@ -56,6 +56,7 @@ void breakables_check_bullet(entity_t *bullet) {
 			e->brk_timer = 0;
 			e->frame = 0;
 			shake_timer = 20;
+			mmEffect(SFX_BREAKABLE);
 		}
 	}
 }
@@ -71,6 +72,8 @@ void breakables_update(void) {
 		int px = (e->x >> FIX_SHIFT) - scrollx;
 		int py = (e->y >> FIX_SHIFT) - scrolly;
 		
+		bool offscreen = px+32 < 0 || py+32 < 0 || px > 240 || py > 160;
+		
 		if (e->anim == &AnimIdle) {
 			
 		} else if (e->anim == &AnimAppear) {
@@ -81,6 +84,11 @@ void breakables_update(void) {
 		} else if (e->anim == &AnimDie) {
 			e->brk_timer = MIN(e->brk_timer+1, RESPAWN_TIME);
 			if (e->brk_timer == RESPAWN_TIME && !entity_collide(e, &player)) {
+				
+				if (!offscreen) {
+					mmEffect(SFX_BREAKABLE_SPAWN);
+				}
+				
 				set_anim(e, &AnimAppear);
 				e->frame = 0;
 				brk_set_cells(e->x, e->y, CELL_SOLID);
@@ -90,7 +98,7 @@ void breakables_update(void) {
 			}
 		}
 		
-		if (px+32 < 0 || py+32 < 0 || px > 240 || py > 160) {
+		if (offscreen) {
 			continue;
 		}
 		
