@@ -10,7 +10,7 @@ endif
 include $(DEVKITARM)/gba_rules
 
 # we're using tonc instead of libgba
-LIBTONC := $(DEVKITPRO)/tonclib
+LIBTONC := $(DEVKITPRO)/tonclib $(DEVKITPRO)/libtonc
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output, if this ends with _mb a multiboot image is generated
