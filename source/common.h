@@ -242,7 +242,6 @@ def int parallax_x, parallax_y;
 
 // sizes of various entity arrays
 
-#define ZOMBIE_COUNT 1
 #define MUZZLE_COUNT 4
 #define BULLET_COUNT 8
 #define BREAKABLE_COUNT 20
@@ -259,7 +258,6 @@ def entity_t shield;
 def entity_t label_dialog;
 def entity_t bullets[BULLET_COUNT];
 def entity_t muzzles[MUZZLE_COUNT];
-def entity_t zombies[ZOMBIE_COUNT];
 def entity_t breakables[BREAKABLE_COUNT];
 def entity_t gems[GEM_COUNT];
 
@@ -301,9 +299,6 @@ uint player_init(uint tid);
 void player_update(void);
 void player_draw(void);
 
-uint zombies_init(uint tid);
-void zombies_update(void);
-
 uint muzzles_init(uint tid);
 void muzzles_update(void);
 
@@ -322,7 +317,6 @@ void altars_update(void);
 uint gems_init(uint tid);
 void gems_update(void);
 
-entity_t *zombie_spawn(int x, int y);
 entity_t *muzzle_spawn(int x, int y, int aff, int attr1);
 entity_t *muzzle_spawn_impact(int x, int y, int dir);
 entity_t *shield_spawn(int x, int y);
