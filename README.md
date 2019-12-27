@@ -1,7 +1,7 @@
 ## Goodboy Advance
 Hi, this is the source for [_Goodboy Advance_](https://hotpengu.itch.io/goodboyadvance), a small GBA game made in December 2018 for Ludum Dare 43, by [me](https://twitter.com/exelotl) and [hot_pengu](https://twitter.com/hot_pengu).
 
-Note: Much has changed since this code was written. We learned a lot, and we're working on a full-size version of the game called _Goodboy Galaxy_!
+Much has changed since this code was written. We learned a lot, and we're working on a full-size version of the game called _Goodboy Galaxy_!
 
 Follow us for updates :)  
 <sup>(ok follow Rik for updates or me for RT'd puyo fanart and memes)</sup>
