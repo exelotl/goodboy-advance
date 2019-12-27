@@ -1,16 +1,16 @@
 ## Goodboy Advance
-Hi, this is the source for [_Goodboy Advance_](https://hotpengu.itch.io/goodboyadvance), a small GBA game made in 72 hours for Ludum Dare 43, by [me](https://twitter.com/exelotl) and [hot_pengu](https://twitter.com/hot_pengu).
+Hi, this is the source for [_Goodboy Advance_](https://hotpengu.itch.io/goodboyadvance), a small GBA game made in December 2018 for Ludum Dare 43, by [me](https://twitter.com/exelotl) and [hot_pengu](https://twitter.com/hot_pengu).
 
-Much has changed since this code was written. We learned a lot, and we're working on a full-size version of the game called _Goodboy Galaxy_!
+Note: Much has changed since this code was written. We learned a lot, and we're working on a full-size version of the game called _Goodboy Galaxy_!
 
-Follow us for updates :)
+Follow us for updates :)  
 <sup>(ok follow Rik for updates or me for RT'd puyo fanart and memes)</sup>
 
 
 ### Learning
 
-See [this post](https://itch.io/post/633221) for a quick overview of what we used to make the game. The code was born from the ashes of a Super Crate Box [clone](https://twitter.com/exelotl/status/737086384868102145) that I was working on many years ago.   
-
+See [this post](https://itch.io/post/633221) for a quick overview of what we used to make the game.  
+The code was born from the ashes of a Super Crate Box [clone](https://twitter.com/exelotl/status/737086384868102145) that I was working on many years ago.  
 Here are some things that this codebase does poorly, which we've fixed in the remake and/or you may want to do differently if you're aiming to make something bigger than a jam game:
 
 * All declarations are in 1 header file. This was convenient for the jam but wouldn't cut it for a larger project. (Actually for Galaxy we rewrote everything in [Nim](https://nim-lang.org/) which has a decent module system instead of header files)
