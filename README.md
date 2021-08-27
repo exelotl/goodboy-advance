@@ -3,8 +3,27 @@ Hi, this is the source for [_Goodboy Advance_](https://hotpengu.itch.io/goodboya
 
 Much has changed since this code was written. We learned a lot, and we're working on a full-size version of the game called _Goodboy Galaxy_!
 
-Follow us for updates :)  
-<sup>(ok follow Rik for updates or me for RT'd puyo fanart and memes)</sup>
+<table>
+ <tr>
+  <td>
+   <p>
+   Update: Goodboy Galaxy is now <a href="https://www.kickstarter.com/projects/penguinrik/goodboy-galaxy-exploration-platform-game-gba-pc-and-switch" target="_blank">live on Kickstarter</a>,<br>
+    along with a new demo (<a href="https://hotpengu.itch.io/goodboy-galaxy-demo" target="_blank">Chapter Zero</a>) which<br>
+    improves on the jam version in every way!
+   </p>
+   <p>We really hope you enjoy it!</p>
+   <p align="center">
+    <a href="https://www.goodboygalaxy.com" target="_blank">
+     <img src="https://www.goodboygalaxy.com/screenshot2.gif">
+    </a>
+   </p>
+  </td>
+ </tr>
+</table>
+
+
+<!--Follow us for updates :)  
+<sup>(ok follow Rik for updates or me for RT'd puyo fanart and memes)</sup>-->
 
 
 ### Learning
